@@ -1,0 +1,112 @@
+# ARTMS — Virtual Angel Archive
+
+A fan-made showcase site for the K-pop group **ARTMS**, built as a single-page
+scroll narrative across their three eras: *Dall (Devine All Love & Live)*,
+*Club Icarus*, and *Hyper-Ego*.
+
+Not affiliated with Modhaus. All photography belongs to its respective owners
+and scanners — see the credits section of the site.
+
+---
+
+## Quick start
+
+```bash
+npm install
+npm run dev
+```
+
+> **First run on a new machine:** run `npm install` locally even if
+> `node_modules/` is already present. `sharp`, `rollup` and `esbuild` ship
+> platform-specific binaries, and a tree installed on another OS will not run.
+
+Then, once, to generate the assets the site loads:
+
+```bash
+npm run media    # responsive AVIF/WebP derivatives + LQIP placeholders
+npm run video    # hero video re-encode + poster frame
+npm run fonts    # 2.5 kB Korean subset
+```
+
+`public/media/` and `public/fonts/` are committed, so this is only needed after
+changing the source scans.
+
+---
+
+## Scripts
+
+| Script | What it does |
+|---|---|
+| `npm run dev` | Vite dev server |
+| `npm run build` | Type-check, then production build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run media` | Rebuild image derivatives (resumable; `-- --force` to redo all) |
+| `npm run video` | Re-encode the hero video and poster |
+| `npm run fonts` | Rebuild the Korean font subset |
+| `npm run lint` | oxlint |
+| `npm run format` | Prettier |
+| `npm run typecheck` | `tsc` only |
+
+---
+
+## Stack
+
+- **Vite 8** + **React 19** + **TypeScript** (strict)
+- **Tailwind CSS v4** — CSS-first `@theme`; era palettes are plain custom
+  properties so GSAP can tween them directly
+- **GSAP 3 + ScrollTrigger** — everything tied to scroll position
+- **Framer Motion** — everything tied to mount/unmount (the member dossier)
+- **Lenis** — smooth scroll, driven by the GSAP ticker on a single RAF loop
+- **sharp** / **ffmpeg** / **subset-font** — build-time asset pipeline
+
+The two animation libraries have a hard boundary: GSAP owns scroll, Framer
+Motion owns presence. They never animate the same property on the same element.
+
+---
+
+## Source media
+
+The original scans are multi-megabyte files and are **not** in this repo. They
+live beside it, in a folder the pipeline reads at build time:
+
+```
+Downloads/
+├─ artms/                    ← this repo
+└─ artms media resources/    ← originals (Group/, Members/, Hero Video/)
+```
+
+Point the pipeline elsewhere with `MEDIA_SRC`:
+
+```bash
+MEDIA_SRC="/path/to/scans" npm run media
+```
+
+`scripts/media.config.mjs` maps every source filename to the slug the app refers
+to it by. That mapping is explicit on purpose — renaming a scan fails loudly
+instead of silently dropping a photo from the page.
+
+---
+
+## Structure
+
+```
+src/
+├─ components/
+│  ├─ chrome/       edge frame, nav rail, scanlines, grain, cursor, marquee
+│  └─ sections/     hero, eras, members, credits
+├─ data/            eras, members, credits, generated media manifest
+├─ lib/             gsap setup, lenis, era palette driver, formatting
+└─ styles/          tokens, base, effects
+```
+
+Art direction, layout rules and section choreography: [`docs/ART-DIRECTION.md`](docs/ART-DIRECTION.md).
+
+---
+
+## Accessibility
+
+- `prefers-reduced-motion` resolves every scrubbed timeline to its end state;
+  scanline drift, the CRT sweep and the marquee all stop. The site stays
+  complete and legible.
+- Member rows are real buttons; the dossier traps focus and restores it on close.
+- The invert control is a real toggle with `aria-pressed`.
