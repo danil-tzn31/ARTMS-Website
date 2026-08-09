@@ -1,0 +1,77 @@
+/* ---------------------------------------------------------------------------
+   Design tokens
+
+   Era palettes live on :root as plain custom properties rather than Tailwind
+   utilities, because GSAP tweens them directly as the page scrolls. Anything
+   that needs to re-skin mid-scroll reads from these; anything static can use
+   the Tailwind theme colours below.
+   --------------------------------------------------------------------------- */
+
+/* Registered so the browser treats it as a number rather than a token string.
+   Without this, animating the width axis through a custom property silently
+   resolves to 0 the first time it is read. */
+@property --wdth {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 100;
+}
+
+/* Scroll velocity, published by useScrollVelocity and read by .fx-chroma. */
+@property --velocity {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@theme {
+  --font-display:
+    'Archivo Variable', 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+  --font-kr: 'Noto Sans KR Subset', 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  --spacing-frame: 20px;
+  --spacing-frame-lg: 28px;
+}
+
+:root {
+  /* Live palette — tweened by ScrollTrigger as each era enters. Seeded with
+     the hero values so the first paint is never wrong. */
+  --bg: #08060c;
+  --ink: #e8e6f0;
+  --ink-dim: #6f6b85;
+  --accent: #c9a7f0;
+  --accent-2: #ffc2de;
+
+  /* Chrome */
+  --rule: color-mix(in srgb, var(--ink) 22%, transparent);
+  --rule-strong: color-mix(in srgb, var(--ink) 45%, transparent);
+
+  /* Effects */
+  --scanline-opacity: 0.5;
+  --scanline-pitch: 3px;
+  --grain-opacity: 0.075;
+
+  /* Frame inset — the hairline the navbar physically sits on. */
+  --frame: var(--spacing-frame);
+
+  color-scheme: dark;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --frame: var(--spacing-frame-lg);
+  }
+}
+
+/* The site is authored dark-first and inverts itself narratively by the third
+   era, so we do not swap on prefers-color-scheme. We do respect forced-colors. */
+@media (forced-colors: active) {
+  :root {
+    --scanline-opacity: 0;
+    --grain-opacity: 0;
+  }
+}

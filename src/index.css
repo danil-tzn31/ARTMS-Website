@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+/* Archivo's `standard` build carries both the weight (100–900) and width
+   (62–125%) axes. The width axis is animated on the hero wordmark, so the
+   single-axis builds are not an option here. */
+@import '@fontsource-variable/archivo/standard.css';
+@import '@fontsource/space-mono/latin-400.css';
+@import '@fontsource/space-mono/latin-700.css';
+@import '@fontsource/instrument-serif/latin-400-italic.css';
+
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/effects.css';
+
+/* Hangul is set in exactly 23 glyphs across the whole site, so it ships as a
+   2.5 kB subset built by `npm run fonts` rather than the 539 kB published
+   Korean slice. See scripts/subset-korean.mjs. */
+@font-face {
+  font-family: 'Noto Sans KR Subset';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/noto-sans-kr-subset.woff2') format('woff2');
+}

@@ -1,0 +1,145 @@
+/* ---------------------------------------------------------------------------
+   Screen effects — scanlines, grain, invert, chromatic drift
+
+   All three overlays are fixed, pointer-events:none, and sit above the page in
+   a single stacking context so nothing below them ever needs a z-index war.
+   --------------------------------------------------------------------------- */
+
+.fx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+}
+
+/* --- Scanlines ------------------------------------------------------------ */
+
+.fx-scanlines {
+  opacity: var(--scanline-opacity);
+  mix-blend-mode: overlay;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.42) 0,
+    rgb(0 0 0 / 0.42) 1px,
+    transparent 1px,
+    transparent var(--scanline-pitch)
+  );
+  /* Slight over-height so the drift never exposes an edge. */
+  height: calc(100% + var(--scanline-pitch) * 2);
+  animation: fx-drift 900ms linear infinite;
+  will-change: transform;
+}
+
+@keyframes fx-drift {
+  to {
+    transform: translate3d(0, calc(var(--scanline-pitch) * -2), 0);
+  }
+}
+
+/* A second, much slower band that sweeps down the screen — this is the part
+   that actually reads as a CRT rather than a texture. */
+.fx-sweep {
+  opacity: 0.06;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--ink) 45%,
+    var(--ink) 55%,
+    transparent 100%
+  );
+  height: 34vh;
+  inset: auto 0 auto 0;
+  animation: fx-sweep 7s linear infinite;
+  will-change: transform;
+}
+
+@keyframes fx-sweep {
+  0% {
+    transform: translate3d(0, -40vh, 0);
+  }
+  100% {
+    transform: translate3d(0, 140vh, 0);
+  }
+}
+
+/* --- Grain ---------------------------------------------------------------- */
+
+.fx-grain {
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+}
+
+.fx-grain > svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Vignette ------------------------------------------------------------- */
+
+.fx-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 42%,
+    color-mix(in srgb, var(--bg) 78%, black) 100%
+  );
+  opacity: 0.85;
+}
+
+/* --- Invert --------------------------------------------------------------- */
+
+/* Everything inverts, media included. That is the point — a half-inverted page
+   looks like a bug, a fully inverted one looks like a mode. */
+[data-invert='true'] .fx-invert-root {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.fx-invert-root {
+  transition: filter 220ms var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-scanlines,
+  .fx-sweep {
+    animation: none;
+  }
+  .fx-sweep {
+    opacity: 0;
+  }
+}
+
+/* --- Ink bleed / grain on display type ------------------------------------ */
+
+/* SVG filters on very large text are expensive. They are opt-in per element,
+   promoted, and dropped entirely on small screens and under reduced motion. */
+.fx-inkbleed {
+  filter: url('#inkbleed');
+  will-change: filter;
+}
+
+.fx-inkbleed-soft {
+  filter: url('#inkbleed-soft');
+  will-change: filter;
+}
+
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .fx-inkbleed,
+  .fx-inkbleed-soft {
+    filter: none;
+    will-change: auto;
+  }
+}
+
+/* --- Chromatic aberration on fast scroll ---------------------------------- */
+
+/* --velocity is written by the Lenis listener (0 at rest, ~1 at speed). */
+.fx-chroma {
+  text-shadow:
+    calc(var(--velocity, 0) * -1.6px) 0 0 color-mix(in srgb, var(--accent) 70%, red),
+    calc(var(--velocity, 0) * 1.6px) 0 0 color-mix(in srgb, var(--accent) 70%, cyan);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-chroma {
+    text-shadow: none;
+  }
+}
