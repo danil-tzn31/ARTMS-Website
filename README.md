@@ -99,7 +99,23 @@ src/
 └─ styles/          tokens, base, effects
 ```
 
-Art direction, layout rules and section choreography: [`docs/ART-DIRECTION.md`](docs/ART-DIRECTION.md).
+- Art direction, layout rules and section choreography:
+  [`docs/ART-DIRECTION.md`](docs/ART-DIRECTION.md)
+
+## Status
+
+| Phase | | |
+|---|---|---|
+| 1 | Scaffold + tooling | done |
+| 2 | Asset pipeline (images, video, fonts, brand) | done |
+| 3 | Shell — edge frame, nav rail, screen effects, scroll wiring | done |
+| 4 | Hero | done |
+| 5 | Preloader + brand assets + type scale | done |
+| 6 | Eras | next |
+| 7 | Member index | |
+| 8 | Member dossier | |
+| 9 | Footer + credits | blocked on the attribution list |
+| 10 | Polish, a11y, perf, deploy | |
 
 ---
 
