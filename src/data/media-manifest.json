@@ -262,17 +262,5 @@
       1920
     ],
     "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAADwAwCdASoUAA4APxFysFAsJqSisAgBgCIJZACdACDpG1jqr1Zb7yuQAP7DWTfOkVsrwbbjcxqnnufld90m12cYjcpvDyo6qsioqt7NhO1fZpMAEdXeeU5jBcY0I+v440isncKFB7RIWB9IwgsgAA=="
-  },
-  "artms-logo": {
-    "slug": "artms-logo",
-    "aspect": 1.0002,
-    "width": 4321,
-    "height": 4320,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
-    "lqip": "data:image/webp;base64,UklGRnABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSOYAAAAFgGPb1vLkvhfc3d3d3aGldHfpmEB6BsCigimwKF07twpad3f4k3wP1wlEROLfdQQIAVAsJCYARAqfSPCBQLX2pJ2EQzNNlG4Gbo2DxLynjm7dB6LkvHkqc8P/tORC0Lft3DXoNZRwzNVncu2mKs+gcz+2sXyA7bOJyWRmdLh+AgAWYSiQECAgCEAkApAAYEWCd1b2ZuYmzV7wcO94b63dA6wK+nHP8wl8mdrbPRu70m4gqSvTlawH6TOuH/QH6tLeLndXzJuGw9LnLMTyyiLgykbz3h1VAAiCb3WKWJGQgAUgMeF/AVZQOCBkAAAAMAQAnQEqFAAUAD8ReLFSrCckoqgNUYAiCWkAA+MBCv6A2NVaS5u5Nx4AAP7wuukATdCPCF8/qmbnY0seNK4Bcg9wQPVjrnz1PRVBUm64RcE8RIKr9DgBrd0oxCYZm2H16wAAAA=="
   }
 }

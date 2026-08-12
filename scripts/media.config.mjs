@@ -49,8 +49,9 @@ export const MEMBER_SHOTS = {
   'Members/ChoerryEgo.jpeg': 'choerry-ego',
 }
 
-export const MISC = {
-  'artms logo.png': 'artms-logo',
-}
-
-export const ALL_IMAGES = { ...GROUP_SHOTS, ...MEMBER_SHOTS, ...MISC }
+/**
+ * Brand assets (the wordmark sheet and the preloader GIF) are NOT handled here.
+ * They are not photographs and do not want responsive srcsets — see
+ * scripts/process-brand.mjs.
+ */
+export const ALL_IMAGES = { ...GROUP_SHOTS, ...MEMBER_SHOTS }

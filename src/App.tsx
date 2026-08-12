@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { EdgeFrame } from '@/components/chrome/EdgeFrame'
 import { NavRail } from '@/components/chrome/NavRail'
 import { InvertToggle } from '@/components/chrome/InvertToggle'
@@ -6,6 +6,8 @@ import { Cursor } from '@/components/chrome/Cursor'
 import { Filters } from '@/components/chrome/Filters'
 import { Screen } from '@/components/chrome/Screen'
 import { Marquee } from '@/components/chrome/Marquee'
+import { Preloader } from '@/components/chrome/Preloader'
+import { Wordmark } from '@/components/chrome/Wordmark'
 import { Hero } from '@/components/sections/Hero'
 import { useLenis, useScrollVelocity } from '@/lib/useLenis'
 import { useInvert } from '@/lib/useInvert'
@@ -31,6 +33,12 @@ export default function App() {
   const { inverted, toggle } = useInvert()
   const time = useClock()
 
+  // The preloader owns the first three seconds. The page underneath is mounted
+  // and animating the whole time, so the handoff lands on a hero that has
+  // already played its intro rather than on one that starts cold.
+  const [booted, setBooted] = useState(false)
+  const onBooted = useCallback(() => setBooted(true), [])
+
   useLenis()
   useScrollVelocity()
   useEraTheme(scope)
@@ -45,15 +53,22 @@ export default function App() {
       <Screen />
       <Cursor />
 
+      {!booted && <Preloader onDone={onBooted} />}
+
       <EdgeFrame>
         {/* Mounted on the top rule. */}
-        <div className="absolute -top-2.5 left-3 flex items-center gap-3">
-          <span className="u-mono-sm pointer-events-auto" style={{ background: 'var(--bg)' }}>
-            <span className="px-1.5">ARTMS™</span>
-          </span>
+        <div className="pointer-events-auto absolute -top-3 left-3">
+          <a
+            href="#hero"
+            className="block px-2 py-1"
+            style={{ background: 'var(--bg)', color: 'var(--ink)' }}
+            data-cursor="Top"
+          >
+            <Wordmark height={16} title="ARTMS — home" />
+          </a>
         </div>
 
-        <div className="absolute -top-3.5 right-1/2 translate-x-1/2">
+        <div className="absolute -top-4 right-1/2 translate-x-1/2">
           <span style={{ background: 'var(--bg)' }} className="block px-1.5">
             <InvertToggle inverted={inverted} onToggle={toggle} />
           </span>
@@ -62,12 +77,12 @@ export default function App() {
         <NavRail />
 
         {/* Mounted on the bottom rule. */}
-        <div className="absolute -bottom-2 left-3">
+        <div className="absolute -bottom-2.5 left-3">
           <span className="u-mono-sm px-1.5" style={{ background: 'var(--bg)' }}>
             Fan Archive — Not Affiliated With Modhaus
           </span>
         </div>
-        <div className="absolute -bottom-2 right-3">
+        <div className="absolute -bottom-2.5 right-3">
           <span
             className="u-mono-sm px-1.5 tabular-nums"
             style={{ background: 'var(--bg)', color: 'var(--ink-dim)' }}

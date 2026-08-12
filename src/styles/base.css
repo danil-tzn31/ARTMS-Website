@@ -32,8 +32,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 15px;
+  line-height: 1.5;
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -84,20 +84,36 @@ video {
   margin: 0;
 }
 
+/* Micro type is deliberately small relative to the display sizes, but "micro"
+   still has to mean readable. These sit at 13–15px, not the 9–10px that
+   reference sites like gobold use — that scale looks sharp in a screenshot and
+   is genuinely hard to read on a real screen. The size *gap* between display
+   and label is what carries the visual system, and the gap is already enormous
+   when the headline is 25vw. */
 .u-mono {
   font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.3;
-  letter-spacing: 0.14em;
+  font-size: clamp(13px, 0.95vw, 15px);
+  line-height: 1.45;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .u-mono-sm {
   font-family: var(--font-mono);
-  font-size: 9px;
-  line-height: 1.2;
-  letter-spacing: 0.18em;
+  font-size: clamp(12px, 0.85vw, 14px);
+  line-height: 1.4;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
+}
+
+/* Body-length prose. Not uppercase, not tracked out — the only place on the
+   site where mono behaves like text rather than like a label. */
+.u-body {
+  font-family: var(--font-mono);
+  font-size: clamp(14px, 1.05vw, 17px);
+  line-height: 1.65;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .u-serif {
@@ -116,6 +132,12 @@ video {
 
 .u-dim {
   color: var(--ink-dim);
+}
+
+/* Chrome that sits over photography or video needs a floor on legibility that
+   does not depend on what is behind it. */
+.u-over-media {
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.65);
 }
 
 /* Hairline rules used throughout the layout. Kept as classes rather than

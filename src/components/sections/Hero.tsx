@@ -16,6 +16,11 @@ import { useClock } from '@/lib/useClock'
  * The width axis is driven through a `--wdth` custom property rather than the
  * `font-stretch` shorthand, because GSAP can interpolate a bare number but not
  * a font-variation-settings string.
+ *
+ * The wordmark sits in `mix-blend-mode: difference`, so it inverts whatever
+ * frame of the film is behind it rather than sitting on top of it. That is why
+ * the video is graded brighter than a normal hero would be — difference against
+ * a dark plate produces dark type, and the letterforms disappear.
  */
 export function Hero() {
   const root = useRef<HTMLElement>(null)
@@ -76,7 +81,7 @@ export function Hero() {
       <video
         data-hero-video
         className="absolute inset-0 size-full object-cover"
-        style={{ filter: 'brightness(0.62) saturate(0.7) contrast(1.15)' }}
+        style={{ filter: 'brightness(0.92) saturate(0.82) contrast(1.06)' }}
         src={VIDEO.mp4}
         poster={VIDEO.poster}
         autoPlay
@@ -96,7 +101,7 @@ export function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(to bottom, rgb(4 3 8 / 0.72) 0%, rgb(4 3 8 / 0.18) 26%, rgb(4 3 8 / 0.22) 68%, rgb(4 3 8 / 0.82) 100%)',
+            'linear-gradient(to bottom, rgb(4 3 8 / 0.62) 0%, rgb(4 3 8 / 0.04) 30%, rgb(4 3 8 / 0.08) 64%, rgb(4 3 8 / 0.74) 100%)',
         }}
       />
       <div
@@ -110,13 +115,15 @@ export function Hero() {
           by the edges. The full name stays available to assistive tech. */}
       <h1
         ref={wordmark}
-        className="u-display fx-inkbleed fx-chroma relative z-10 w-full text-center"
+        className="u-display fx-inkbleed relative z-10 w-full text-center"
         style={
           {
             '--wdth': 116,
             fontSize: 'clamp(5rem, 25.5vw, 32rem)',
             fontVariationSettings: '"wdth" var(--wdth), "wght" 800',
             fontStretch: 'normal',
+            color: '#fff',
+            mixBlendMode: 'difference',
             willChange: 'transform, font-variation-settings',
           } as React.CSSProperties
         }
@@ -130,7 +137,7 @@ export function Hero() {
         className="pointer-events-none absolute z-10"
         style={{ inset: 'calc(var(--frame) + 18px)' }}
       >
-        <div data-hero-fade className="u-mono absolute left-0 top-0 max-w-[18ch]">
+        <div data-hero-fade className="u-mono u-over-media absolute left-0 top-0 max-w-[18ch]">
           <span className="u-dim">Est.</span> 2024
           <br />
           <span className="u-dim">Label</span> Modhaus
@@ -138,7 +145,7 @@ export function Hero() {
           <span className="u-dim">Members</span> 05
         </div>
 
-        <div data-hero-fade className="u-mono absolute right-0 top-0 text-right">
+        <div data-hero-fade className="u-mono u-over-media absolute right-0 top-0 text-right">
           <span className="u-dim">Seoul</span>
           <br />
           <span className="tabular-nums" style={{ color: 'var(--accent)' }}>
@@ -147,16 +154,18 @@ export function Hero() {
           KST
         </div>
 
-        <div data-hero-fade className="absolute bottom-0 left-0 max-w-[34ch]">
+        <div data-hero-fade className="u-over-media absolute bottom-0 left-0 max-w-[38ch]">
           <p className="u-serif" style={{ fontSize: 'clamp(1.05rem, 1.8vw, 1.75rem)' }}>
             Angel software, booting.
           </p>
-          <p className="u-mono u-dim mt-3">Three eras · Dall / Club Icarus / Hyper-Ego</p>
+          <p className="u-mono mt-3" style={{ color: 'var(--ink)' }}>
+            Three eras · Dall / Club Icarus / Hyper-Ego
+          </p>
         </div>
 
         <div
           data-hero-fade
-          className="u-mono-sm absolute bottom-0 right-0 flex items-center gap-2"
+          className="u-mono-sm u-over-media absolute bottom-0 right-0 flex items-center gap-2"
         >
           <span className="u-dim">Scroll</span>
           <span className="block h-px w-8" style={{ background: 'var(--accent)' }} />

@@ -42,13 +42,13 @@
      the hero values so the first paint is never wrong. */
   --bg: #08060c;
   --ink: #e8e6f0;
-  --ink-dim: #6f6b85;
+  --ink-dim: #9c97b2;
   --accent: #c9a7f0;
   --accent-2: #ffc2de;
 
   /* Chrome */
-  --rule: color-mix(in srgb, var(--ink) 22%, transparent);
-  --rule-strong: color-mix(in srgb, var(--ink) 45%, transparent);
+  --rule: color-mix(in srgb, var(--ink) 28%, transparent);
+  --rule-strong: color-mix(in srgb, var(--ink) 55%, transparent);
 
   /* Effects */
   --scanline-opacity: 0.5;

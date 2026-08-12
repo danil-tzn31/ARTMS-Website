@@ -33,7 +33,7 @@ export const ERAS: Era[] = [
     palette: {
       bg: '#0B0710',
       ink: '#EADCF2',
-      inkDim: '#8C7A9B',
+      inkDim: '#A796B6',
       accent: '#C9A7F0',
       accent2: '#FFC2DE',
     },
@@ -58,7 +58,7 @@ export const ERAS: Era[] = [
     palette: {
       bg: '#050705',
       ink: '#D8FFD8',
-      inkDim: '#4E7A56',
+      inkDim: '#7FBE8B',
       accent: '#00FF5A',
       accent2: '#0B3D1B',
     },
@@ -83,7 +83,7 @@ export const ERAS: Era[] = [
     palette: {
       bg: '#EFEDE7',
       ink: '#121110',
-      inkDim: '#6B6660',
+      inkDim: '#5C5750',
       accent: '#E5241B',
       accent2: '#8A8580',
     },

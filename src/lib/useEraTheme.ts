@@ -4,7 +4,7 @@ import { ERAS } from '@/data/eras'
 const HERO_PALETTE = {
   '--bg': '#08060C',
   '--ink': '#E8E6F0',
-  '--ink-dim': '#6F6B85',
+  '--ink-dim': '#9C97B2',
   '--accent': '#C9A7F0',
   '--accent-2': '#FFC2DE',
 }
