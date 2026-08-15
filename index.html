@@ -27,15 +27,26 @@
     <link rel="preload" as="image" href="/media/video/hero.jpg" />
 
     <!-- Paint the first frame in the hero palette before React mounts, so the
-         page never flashes white on a slow connection. -->
+         page never flashes white on a slow connection. The invert filter lives
+         on :root, so this one value covers both modes — inverted, #08060c is
+         the off-white the toggle is supposed to produce. -->
     <style>
       html {
         background: #08060c;
       }
-      html[data-invert='true'] {
-        background: #f7f9f3;
-      }
     </style>
+
+    <!-- Restore the invert preference before first paint. React sets the same
+         attribute on mount, but that is one frame too late: a returning visitor
+         with invert on would see the page flash in the wrong polarity. -->
+    <script>
+      try {
+        document.documentElement.dataset.invert =
+          localStorage.getItem('artms:invert') === '1' ? 'true' : 'false'
+      } catch (e) {
+        document.documentElement.dataset.invert = 'false'
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

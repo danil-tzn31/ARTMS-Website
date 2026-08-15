@@ -44,7 +44,7 @@ export default function App() {
   useEraTheme(scope)
 
   return (
-    <div ref={scope} className="fx-invert-root">
+    <div ref={scope}>
       <a className="u-skip-link" href="#eras">
         Skip to content
       </a>

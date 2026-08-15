@@ -88,12 +88,27 @@
 /* --- Invert --------------------------------------------------------------- */
 
 /* Everything inverts, media included. That is the point — a half-inverted page
-   looks like a bug, a fully inverted one looks like a mode. */
-[data-invert='true'] .fx-invert-root {
+   looks like a bug, a fully inverted one looks like a mode.
+
+   The filter MUST live on the root element, not on a wrapper div. A `filter`
+   value other than `none` makes an element a containing block for its fixed
+   and absolutely positioned descendants — the CSS spec exempts the document
+   root element and nothing else. On a wrapper, that exemption does not apply,
+   and everything `position: fixed` inside it silently becomes scroll-bound:
+   the edge frame, the scanline stack, the cursor, and — worst of all —
+   ScrollTrigger's pin, which is implemented with `position: fixed`. The hero
+   then scrolled away while its scrubbed timeline kept running, so the wordmark
+   collapsed to its docked size in mid-air. Invert mode looked like a broken
+   scroll animation; it was a broken containing block.
+
+   Measured before the fix, at scrollY 700 with invert on: the frame sat at
+   -672px, the scanlines at -704px, and the hero at -700px. With the filter on
+   :root they hold at 28, -4 and 0. */
+html[data-invert='true'] {
   filter: invert(1) hue-rotate(180deg);
 }
 
-.fx-invert-root {
+html {
   transition: filter 220ms var(--ease-out-expo);
 }
 

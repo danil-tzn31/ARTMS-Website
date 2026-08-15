@@ -225,7 +225,7 @@ timestamp, `© 2026 — FAN PROJECT · NOT AFFILIATED WITH MODHAUS`.
 |---|---|
 | Scanlines | Fixed `repeating-linear-gradient`, 3 px pitch, `mix-blend-mode: overlay`, slow vertical drift + rare flicker keyframe |
 | Grain | Fixed SVG `feTurbulence` layer, `overlay`, 0.08 opacity |
-| Invert mode | `filter: invert(1) hue-rotate(180deg)` on the root wrapper — media inverts too, deliberately. Persisted per visitor |
+| Invert mode | `filter: invert(1) hue-rotate(180deg)` on `html` — **never on a wrapper div**, which would make it a containing block for every fixed descendant and break the frame, the scanlines and ScrollTrigger's pin. Media inverts too, deliberately. Persisted per visitor, restored before first paint by an inline script |
 | Cursor | Mono crosshair with contextual label (`VIEW` / `DRAG` / `CLOSE`). Hidden on touch |
 | Chromatic aberration | ±1 px R/B offset on display type during fast scroll only, driven by Lenis velocity |
 
