@@ -4,11 +4,7 @@
     "aspect": 1.412,
     "width": 5648,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoUAA4APxFysFAsJqSisAgBgCIJaACdABo9O0lZxHgNZONgAP7IkaSvIF7g2cBOT+SoFTBhKZHSOCNF38+Jo+qJVyVfcGQDLMA7v6ipHCD0GDlmqtQXJ5DsXaaKRF/bn0P07qCAAAA="
   },
   "group-dall-02": {
@@ -16,11 +12,7 @@
     "aspect": 1.3938,
     "width": 5575,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAACQAwCdASoUAA4APxFysFAsJqSisAgBgCIJQBjegwdxBDWLgqAAAP7p0TaE/63SvQbWeEJyAGPrvjm4Oh1GVAkMkP+CR30vx5BnoO8Zocgxajtbz0JY1Hl8fp0vfWpVcd1v8j2o+RRqEpN7oqWay2L5IDkfBAAA"
   },
   "group-icarus-01": {
@@ -28,11 +20,7 @@
     "aspect": 1.2617,
     "width": 5047,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAQBACdASoUABAAPxFysFAsJqSisAgBgCIJbACdABusmkwTZ1lxC830tAD57V0iVbPB3GUX3tyfJVTvLeKGrT5edCBuoFEbYmtkavVkRgBAyEQZUwQd9th3DBAaPA5js5h5eyA6ifxpnvfnuTcBba+DM3FItGkDf5OROOzGtK6vt7zf/D6aa1AA"
   },
   "group-icarus-02": {
@@ -40,11 +28,7 @@
     "aspect": 1.2632,
     "width": 5053,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRroAAABXRUJQVlA4IK4AAAAwBACdASoUABAAPxFysFAsJqSisAgBgCIJbACw7dwLfmODCKzyoykrljgA3ldfXj4zRhdTOxDy4Pjz3zK/fy/4kr/GzMYXTSPTuWmKFT9LnDcPLOp65NFOaa/vnCOrhu+ar4Ei8VlUhDgDQYyDeSsu/q4EOndKA9eC5503NH7SQ+M6YiqtRmOzZ9hXDMMGkb84/ZYwhs0DTGd0YVhCkOHA2VefQiznD+A3goAAAAA="
   },
   "group-icarus-03": {
@@ -52,11 +36,7 @@
     "aspect": 1.2652,
     "width": 5061,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAACQBACdASoUABAAPxFysFAsJqSisAgBgCIJbACdMoR3AdCUvNBebfmdV0498AAA/nebfmzLTS9zsV1XNKisPDyeFlfepVqfme+YmwWZDZB0dW8ovxEWmyzKr3OD5QTb6/oPFhJ+pil04ZhwphGO7AzLRVG8bHhMrUXjy78gpmUFM+cuYRzimV4SlptOlfnenVaBqmIRWfUGjGUFQqZypByFo8qFRAAA"
   },
   "group-icarus-04": {
@@ -64,11 +44,7 @@
     "aspect": 2.537,
     "width": 10148,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADwAwCdASoUAAgAPxFysFAsJqSisAgBgCIJaACdMoADNgXF8FrdwXTgAPQ/cXBBpNJLEB0xCmOt5UhZp1+BejQXu6BxwRtcgMyiRucyXvKM8hzuay9ir993uiZx8W5lFmLsvYFF2RLlffrYdLLz4AAA"
   },
   "group-ego-01": {
@@ -76,11 +52,7 @@
     "aspect": 1.4179,
     "width": 8000,
     "height": 5642,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAABQAwCdASoUAA4APxFysFAsJqSisAgBgCIJZ1efADb+2lGVgAD+7cQwpNT7Z6jMO09y1dlVbNBsdVjudvSH/iva9BjJ1mMCHPtBLSBZF4EAAA=="
   },
   "group-ego-02": {
@@ -88,11 +60,7 @@
     "aspect": 1.425,
     "width": 8000,
     "height": 5614,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAAAQBACdASoUAA4APxFysFAsJqSisAgBgCIJZgCdMoADZ2YzsaUCsKVkAAD+eB5U+gZjsiFf8KoriZRG1Y1yCEvm/rYdAa/hKxRz9DBKtqSuwakuTzVlBKuodXTfm/c0hnFvpD1pfnuJ4K8FYIDpqZO7tnipa2/+rCcFmiMWaYRcAA=="
   },
   "heejin-dall": {
@@ -100,11 +68,7 @@
     "aspect": 0.707,
     "width": 2828,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAACwBQCdASoUABwAPxF2slKsJySisBgIAYAiCWYAqSbrvCAhSsEWsz3kEqLQGLAcdn/yldfjdYAA+KLWK7oA43jMZmTGjuEofFw5e5VvGo4OhA1sNWKc6+4NNzbHd529APe6zkuD0yXRrdD+pfTmMXno2RvyPGJlD/9VY2nuMG4NkGH4sD+F4KxRGENe7D0nLYUsVbuD1chTTm0s1FGwBKL7BSrxscQeWJMizeE5oFJnOsC+QySORR+4hhM/we3IYAA="
   },
   "heejin-icarus": {
@@ -112,11 +76,7 @@
     "aspect": 1.261,
     "width": 5044,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAwBACdASoUABAAPxFysFAsJqSisAgBgCIJbACdMoACMBEcDgDLBVmSGAAAyG4r2QwhG9erVkhEk1DMmdarNG6k3ai3uUR2i132eDZ5Ib65QNJVgexLv2WAecpPb7neb/Ir+fsfpmvkz4fkJA3RXChBUFWoxrsJ5FibmOJqCBTzrH1n3WOkcDsN+/9F08qmgnf/8HHUAAA="
   },
   "heejin-ego": {
@@ -124,11 +84,7 @@
     "aspect": 1.4258,
     "width": 8000,
     "height": 5611,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQBACdASoUAA4APxFyslCsJqSisAgBgCIJYgCdAB0ltXz6mSt7552UAAD+sVoWiUcRo2apyqMZJjgFr4xcxg1W9QUrVh88iWT9k1PutKUCPDL2D6M1MUk72fBvL4AA"
   },
   "haseul-dall": {
@@ -136,11 +92,7 @@
     "aspect": 0.7027,
     "width": 2811,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRtwAAABXRUJQVlA4INAAAACwBQCdASoUABwAPxF6tVOsJ6UiqAqpgCIJZgCw7d0YZg8mlF4A8S9ZMNWqBpwdl1xmFMQTG0AA/mfaMt/f9Kn6kOq8tXmJy/268//T0widoqB8fDSa0gCeFi5rAM/1mObyOeYyiRRpge5J8L1YWoWm1N+wDi2HEqzssdWbp2l0KQ0xIjLsWQFp6YThmkQWvNJ1Ps+BGma68Sk7z/iHnojXwHWVCzKtgZqe3cPe6LJi8i0GZc2LzeQ6sU6juUI4K9cnh0meA1bXijYr5GEU8wAA"
   },
   "haseul-icarus": {
@@ -148,11 +100,7 @@
     "aspect": 1.2635,
     "width": 5054,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAACQAwCdASoUABAAPxFysFAsJqSisAgBgCIJbACw7CB9vBrTevpAAP7Qac7swxSHKKCEyGgrppVmEWvJkjv+SZwu3TJgePQj0nhye/H2/az6v1679mRDq2eWQAbNAAAA"
   },
   "kimlip-dall": {
@@ -160,11 +108,7 @@
     "aspect": 0.7015,
     "width": 2806,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRtAAAABXRUJQVlA4IMQAAADQBQCdASoUAB0APxF8tFOsJ6SiqAqpgCIJagCdMuIqnsUBgxs/JEBgKa1hjF+AaYoZuiZHHMsAAPg9nhtg706/5t4yODRUg2BhBWyiCz2BEAx7RhaLnj0GRUTyAyrUsiSvApKE6wcLM+bVVr4B4SXNv74Rbt8+VowqFxk7MnSx4rbz7RQpKamJm4YZr2Y3ll/NJRS0FXwYfEaAat1J3H1e4vvCJMexUlqAURyoBNjm6Zf1/GQynnWX7xqa3mwqwam+oAAA"
   },
   "kimlip-icarus": {
@@ -172,11 +116,7 @@
     "aspect": 1.2608,
     "width": 5043,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAABQBACdASoUABAAPxFysFAsJqSisAgBgCIJbACdMoR4OsAAahjL2tGjLYYAAP7F38CRvcyr+EyTIj1eO0Wl9EmhD2x9Xgi3IfiMD7hrfhsD9UPL9unDlG81PWLl32savaxBalNYkG3BB3kYWALhEsxSmBIVaC06nf0mcEPw/qsI/nQYFvsnoJdHvVrztSeUcNhMS1fm/QM2pt9QE0bgHBC+S+GcahaYSD/QAAAA"
   },
   "kimlip-ego": {
@@ -184,11 +124,7 @@
     "aspect": 1.4205,
     "width": 8000,
     "height": 5632,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADwAwCdASoUAA4APxFysFAsJqSisAgBgCIJQBOgAwyHSTv2uf9WcBcwAP7qhYS1lCyUJiGA7ifAQ26T4AyhLtkn4LFlefPsrrBF1k6aB9MNCq16JAAAAA=="
   },
   "jinsoul-dall": {
@@ -196,11 +132,7 @@
     "aspect": 0.7027,
     "width": 2811,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAADQBACdASoUABwAPxF8tFOsJ6SiqAqpgCIJaACuHA8n1+QmzKH/B5wWEf14duJPAADCLdXOd1Dqdq3bSiU1syKIruAVlGxoWVyBVdsAv4BxRWKxCuOENWAaJwvxNkRyrezB04nNlwD7Fy4domwSOq9FGFfNsIN5Orir6cAs/kzlNDGCbdsO49eqHvpRA0I3y40CBheFATQs+yq79xrIOHiFtTbZTroYlGSQzarfZaZ704jYbe3YiEAA"
   },
   "jinsoul-icarus": {
@@ -208,11 +140,7 @@
     "aspect": 1.2606,
     "width": 12034,
     "height": 9546,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAADwAwCdASoUABAAPxFysFAsJqSisAgBgCIJbAC06CHfhGUfwVqqf5EAAP7ujk/10Yw8k47MjcnhO//sD5MG6WDLeyX8/+MO5Q6rtPWWfkM7BZjopBc6/H6fyX/oIvVAYvuTRjYaQpAAAA=="
   },
   "jinsoul-ego": {
@@ -220,11 +148,7 @@
     "aspect": 1.4268,
     "width": 8000,
     "height": 5607,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACwAwCdASoUAA4APxFysFAsJqSisAgBgCIJQBOgA7JfsQ9nt6EnAAD+VPssMVuJ3yBKyCZn99xPJmtRR65QPDJYUUB09CXrQ5aUh0TBAAA="
   },
   "choerry-dall": {
@@ -232,11 +156,7 @@
     "aspect": 0.7105,
     "width": 2842,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRrwAAABXRUJQVlA4ILAAAACQBQCdASoUABwAPxF0slKsJiSisBgIAYAiCWgAuzM0QNgRFdpaiew4g8e6ftvgKmu7dk/bAADbaQe2UEZyJW5MZdH2y8LhVAFbqgWdjWG3BOKxnMRSyIKsoqUmpLVmZmWme8lE+f81SQ2dM5RLGE3AM8IT+6ZJlDP0LI5dbcf7xptbzXRUMfDIWeP73yCvPX84L0x+86qdryCs0yX7pUbdWmC7cnCJ5R+oWA6HJcAAAA=="
   },
   "choerry-icarus": {
@@ -244,11 +164,7 @@
     "aspect": 1.2645,
     "width": 5058,
     "height": 4000,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAABQBACdASoUABAAPxFysFCsJqSisAgBgCIJZACw7CFwy4MlFFd7aKgnQnMAAP7r8Bht/QnpuKlChYstkYL6M5YGatck2rMmaV1jvGXcvrwWGj0XmRzbxRKXK3FeaGRjlKeCdWqDWVPYUcMbVDSFHNf1bIt4PnPWPyr00f9Pc2X3l2EXIApvDAAA"
   },
   "choerry-ego": {
@@ -256,11 +172,7 @@
     "aspect": 1.4085,
     "width": 8000,
     "height": 5680,
-    "widths": [
-      640,
-      1280,
-      1920
-    ],
+    "widths": [640, 1280, 1920],
     "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAADwAwCdASoUAA4APxFysFAsJqSisAgBgCIJZACdACDpG1jqr1Zb7yuQAP7DWTfOkVsrwbbjcxqnnufld90m12cYjcpvDyo6qsioqt7NhO1fZpMAEdXeeU5jBcY0I+v440isncKFB7RIWB9IwgsgAA=="
   }
 }

@@ -29,7 +29,9 @@ export function Cursor() {
       yTo(e.clientY)
       setVisible(true)
 
-      const target = (e.target as HTMLElement | null)?.closest<HTMLElement>('[data-cursor]')
+      const target = (e.target as HTMLElement | null)?.closest<HTMLElement>(
+        '[data-cursor]',
+      )
       setLabel(target?.dataset.cursor ?? null)
     }
 

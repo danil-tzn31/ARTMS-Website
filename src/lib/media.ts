@@ -17,7 +17,9 @@ export function getMedia(slug: string): MediaRecord | undefined {
 export function srcSet(slug: string, format: 'avif' | 'webp'): string | undefined {
   const record = RECORDS[slug]
   if (!record) return undefined
-  return record.widths.map((w) => `${BASE}/${format}/${slug}-${w}.${format} ${w}w`).join(', ')
+  return record.widths
+    .map((w) => `${BASE}/${format}/${slug}-${w}.${format} ${w}w`)
+    .join(', ')
 }
 
 export function fallbackSrc(slug: string): string | undefined {

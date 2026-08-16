@@ -9,6 +9,7 @@ import { Marquee } from '@/components/chrome/Marquee'
 import { Preloader } from '@/components/chrome/Preloader'
 import { Wordmark } from '@/components/chrome/Wordmark'
 import { Hero } from '@/components/sections/Hero'
+import { Eras } from '@/components/sections/Eras'
 import { useLenis, useScrollVelocity } from '@/lib/useLenis'
 import { useInvert } from '@/lib/useInvert'
 import { useEraTheme } from '@/lib/useEraTheme'
@@ -68,7 +69,10 @@ export default function App() {
           </a>
         </div>
 
-        <div className="absolute -top-4 right-1/2 translate-x-1/2">
+        {/* Centred on the top rule from md up. On a phone the wordmark and
+            the toggle collide there, so the toggle moves to the right end of
+            the rule instead. */}
+        <div className="absolute -top-4 right-3 translate-x-0 md:right-1/2 md:translate-x-1/2">
           <span style={{ background: 'var(--bg)' }} className="block px-1.5">
             <InvertToggle inverted={inverted} onToggle={toggle} />
           </span>
@@ -96,9 +100,10 @@ export default function App() {
         <Hero />
         <Marquee items={TICKER} />
 
-        {/* Sections land here in the next phases. The placeholders keep the
-            nav rail and the era palette driver wired to real anchors. */}
-        <section id="eras" className="min-h-[60vh]" />
+        <Eras />
+
+        {/* Remaining sections land here in phases 7-9. The placeholders keep
+            the nav rail wired to real anchors in the meantime. */}
         <section id="members" className="min-h-[60vh]" />
         <section id="credits" className="min-h-[40vh]" />
       </main>

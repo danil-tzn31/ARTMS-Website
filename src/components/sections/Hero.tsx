@@ -150,7 +150,10 @@ export function Hero() {
         className="pointer-events-none absolute z-10"
         style={{ inset: 'calc(var(--frame) + 18px)' }}
       >
-        <div data-hero-fade className="u-mono u-over-media absolute left-0 top-0 max-w-[18ch]">
+        <div
+          data-hero-fade
+          className="u-mono u-over-media absolute left-0 top-0 max-w-[18ch]"
+        >
           <span className="u-dim">Est.</span> 2024
           <br />
           <span className="u-dim">Label</span> Modhaus
@@ -158,7 +161,10 @@ export function Hero() {
           <span className="u-dim">Members</span> 05
         </div>
 
-        <div data-hero-fade className="u-mono u-over-media absolute right-0 top-0 text-right">
+        <div
+          data-hero-fade
+          className="u-mono u-over-media absolute right-0 top-0 text-right"
+        >
           <span className="u-dim">Seoul</span>
           <br />
           <span className="tabular-nums" style={{ color: 'var(--accent)' }}>
@@ -167,7 +173,10 @@ export function Hero() {
           KST
         </div>
 
-        <div data-hero-fade className="u-over-media absolute bottom-0 left-0 max-w-[38ch]">
+        <div
+          data-hero-fade
+          className="u-over-media absolute bottom-0 left-0 max-w-[38ch]"
+        >
           <p className="u-serif" style={{ fontSize: 'clamp(1.5rem, 2.6vw, 2.6rem)' }}>
             Angel software, booting.
           </p>

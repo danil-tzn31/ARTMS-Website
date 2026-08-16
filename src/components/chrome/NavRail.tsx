@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getLenis } from '@/lib/useLenis'
 import { pad } from '@/lib/format'
-
-export const SECTIONS = [
-  { id: 'hero', label: 'Main' },
-  { id: 'eras', label: 'Eras' },
-  { id: 'members', label: 'Members' },
-  { id: 'credits', label: 'Credits' },
-] as const
+import { SECTIONS } from '@/data/sections'
 
 /**
  * Vertical nav mounted on the right-hand frame rule. Each item is a label plus
@@ -58,22 +52,32 @@ export function NavRail() {
           const isActive = active === id
           return (
             <li key={id} className="flex items-center gap-2">
+              {/* The nav sits over whatever the page is doing behind it —
+                  hero video, a 100vw era title, a photograph. It needs its own
+                  ground or it becomes unreadable exactly when the page is at
+                  its loudest. Tinted rather than solid, so it still reads as
+                  mounted on the frame rather than as a floating box. */}
               <span
-                className="u-mono-sm tabular-nums"
-                style={{ color: isActive ? 'var(--accent)' : 'transparent' }}
-                aria-hidden="true"
+                className="flex items-center gap-2 px-1.5 py-0.5"
+                style={{ background: 'color-mix(in srgb, var(--bg) 86%, transparent)' }}
               >
-                {pad(i + 1, 2)}
+                <span
+                  className="u-mono-sm tabular-nums"
+                  style={{ color: isActive ? 'var(--accent)' : 'transparent' }}
+                  aria-hidden="true"
+                >
+                  {pad(i + 1, 2)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => go(id)}
+                  aria-current={isActive ? 'true' : undefined}
+                  className="u-mono-sm transition-colors duration-300"
+                  style={{ color: isActive ? 'var(--accent)' : 'var(--ink-dim)' }}
+                >
+                  {label}
+                </button>
               </span>
-              <button
-                type="button"
-                onClick={() => go(id)}
-                aria-current={isActive ? 'true' : undefined}
-                className="u-mono-sm transition-colors duration-300"
-                style={{ color: isActive ? 'var(--accent)' : 'var(--ink-dim)' }}
-              >
-                {label}
-              </button>
               <span
                 className="block h-px transition-all duration-500"
                 style={{

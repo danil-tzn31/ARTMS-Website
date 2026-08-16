@@ -54,7 +54,12 @@ export const ERAS: Era[] = [
       { no: 5, title: 'Verified Beauty' },
       { no: 6, title: 'BURN' },
     ],
-    photos: ['group-icarus-01', 'group-icarus-02', 'group-icarus-03', 'group-icarus-04'],
+    photos: [
+      'group-icarus-01',
+      'group-icarus-02',
+      'group-icarus-03',
+      'group-icarus-04',
+    ],
     palette: {
       bg: '#050705',
       ink: '#D8FFD8',

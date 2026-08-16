@@ -26,7 +26,12 @@ export function useEraTheme(scope: React.RefObject<HTMLElement | null>) {
       const root = document.documentElement
 
       const apply = (vars: Record<string, string>) =>
-        gsap.to(root, { ...vars, duration: DURATION, ease: 'power2.out', overwrite: 'auto' })
+        gsap.to(root, {
+          ...vars,
+          duration: DURATION,
+          ease: 'power2.out',
+          overwrite: 'auto',
+        })
 
       const triggers: ScrollTrigger[] = []
 

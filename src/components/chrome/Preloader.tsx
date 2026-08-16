@@ -71,18 +71,22 @@ export function Preloader({ onDone }: PreloaderProps) {
         duration: 1.1,
         ease: 'expo.out',
       })
-        .from('[data-pre-mark]', { autoAlpha: 0, y: 22, duration: 0.7, ease: 'expo.out' }, 0.3)
+        .from(
+          '[data-pre-mark]',
+          { autoAlpha: 0, y: 22, duration: 0.7, ease: 'expo.out' },
+          0.3,
+        )
         .from(
           '[data-pre-count]',
           { yPercent: 115, autoAlpha: 0, duration: 0.9, ease: 'expo.out' },
           0.15,
         )
-        .from(
-          '[data-pre-corner]',
-          { autoAlpha: 0, duration: 0.5, stagger: 0.06 },
-          0.5,
+        .from('[data-pre-corner]', { autoAlpha: 0, duration: 0.5, stagger: 0.06 }, 0.5)
+        .to(
+          '[data-pre-bar]',
+          { scaleX: 1, duration: hold - 0.25, ease: 'power1.inOut' },
+          0.25,
         )
-        .to('[data-pre-bar]', { scaleX: 1, duration: hold - 0.25, ease: 'power1.inOut' }, 0.25)
 
       // The flash: three hard cuts, odd-spaced, over in under a fifth of a
       // second. Long enough to feel like a signal dropping, short enough that

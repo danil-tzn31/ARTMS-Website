@@ -158,3 +158,19 @@ html {
     text-shadow: none;
   }
 }
+
+/* --- Era photo cascade ----------------------------------------------------- */
+
+/* Widths are authored per photo for the desktop composition. At phone widths
+   the same vw values produce postage stamps in a lot of empty column, so each
+   shot carries a second, larger width used below the lg breakpoint. Handled
+   here rather than inline because a component cannot write a media query. */
+[data-shot] {
+  width: var(--shot-w-sm);
+}
+
+@media (min-width: 1024px) {
+  [data-shot] {
+    width: var(--shot-w);
+  }
+}
