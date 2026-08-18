@@ -1,6 +1,20 @@
 import type { Era } from '@/types'
 
 /**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * EDITING THE COPY
+ *
+ * `statement` is the large italic line that sits under each era title. It is an
+ * array — one entry per rendered line, each with its own indent. Rewrite them
+ * freely; nothing else needs to change.
+ *
+ *   statement: ['Your first line.', 'Your second.'],
+ *
+ * Two or three lines works. Keep each under about 40 characters, or it will
+ * wrap on its own and lose the staggered indent that makes the block read as
+ * typeset rather than as a paragraph.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
  * Three releases, three palettes. The palettes are not decoration — they drive
  * a luminance arc across the page: violet-black → toxic black → off-white.
  * By the third era the site has inverted itself, which is why the manual invert
@@ -15,7 +29,7 @@ export const ERAS: Era[] = [
     releaseType: '1st Studio Album',
     released: '2024-05-31',
     titleTrack: 'Virtual Angel',
-    statement: 'Five voices arrive as one. Angel software, booting.',
+    statement: ['Five voices arrive as one.', 'Angel software, booting.'],
     tracks: [
       { no: 1, title: 'url' },
       { no: 2, title: 'Virtual Angel', isTitleTrack: true },
@@ -45,7 +59,7 @@ export const ERAS: Era[] = [
     releaseType: '1st Mini Album',
     released: '2025-06-13',
     titleTrack: 'Icarus',
-    statement: 'Fly close enough and the wax gives. Dance anyway.',
+    statement: ['Fly close enough and the wax gives.', 'Dance anyway.'],
     tracks: [
       { no: 1, title: 'Club for the Broken' },
       { no: 2, title: 'Icarus', isTitleTrack: true },
@@ -75,7 +89,7 @@ export const ERAS: Era[] = [
     releaseType: '2nd Mini Album',
     released: '2026-08-07',
     titleTrack: 'Blue Blood',
-    statement: 'The fall was the point. What lands is louder.',
+    statement: ['The fall was the point.', 'What lands is louder.'],
     tracks: [
       { no: 1, title: 'From Wings To Soul' },
       { no: 2, title: 'BORN STUNNER', isPreRelease: true },

@@ -99,15 +99,11 @@ function titleSize(era: Era, lines: string[]): string {
 }
 
 /**
- * Breaks a statement into two lines at a word boundary near the middle, so the
- * second line can be indented against the first. One line has nothing to
- * stagger against; three lines at this size would not fit.
+ * Indent applied to each statement line, as a multiple of the base step, cycled
+ * by line index. Not a straight increase: a monotonic staircase reads as a bad
+ * bullet list, whereas an uneven return keeps the block feeling typeset.
  */
-function splitStatement(statement: string): [string, string] {
-  const words = statement.split(' ')
-  const mid = Math.ceil(words.length / 2)
-  return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')]
-}
+const STATEMENT_INDENT = [0, 1, 0.4, 1.3]
 
 interface EraPanelProps {
   era: Era
@@ -335,13 +331,17 @@ export function EraPanel({ era, index }: EraPanelProps) {
             className="u-serif u-over-media mt-[9vh]"
             style={{ fontSize: 'clamp(1.5rem, 3.2vw, 3.4rem)', lineHeight: 1.12 }}
           >
-            {splitStatement(era.statement).map((row, i) => (
+            {era.statement.map((line, i) => (
               <span
-                key={row}
+                key={line}
                 className="block"
-                style={{ paddingLeft: i === 1 ? 'clamp(1rem, 6vw, 7rem)' : 0 }}
+                style={{
+                  paddingLeft: `calc(clamp(1rem, 6vw, 7rem) * ${
+                    STATEMENT_INDENT[i % STATEMENT_INDENT.length]
+                  })`,
+                }}
               >
-                {row}
+                {line}
               </span>
             ))}
           </p>

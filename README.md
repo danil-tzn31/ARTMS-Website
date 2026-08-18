@@ -101,6 +101,8 @@ src/
 
 - Art direction, layout rules and section choreography:
   [`docs/ART-DIRECTION.md`](docs/ART-DIRECTION.md)
+- Git commands for this repo, with commit-message conventions:
+  [`docs/GIT.md`](docs/GIT.md)
 
 ## Status
 
