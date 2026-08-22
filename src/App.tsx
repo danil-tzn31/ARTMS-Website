@@ -10,6 +10,7 @@ import { Preloader } from '@/components/chrome/Preloader'
 import { Wordmark } from '@/components/chrome/Wordmark'
 import { Hero } from '@/components/sections/Hero'
 import { Eras } from '@/components/sections/Eras'
+import { Members } from '@/components/sections/Members'
 import { useLenis, useScrollVelocity } from '@/lib/useLenis'
 import { useInvert } from '@/lib/useInvert'
 import { useEraTheme } from '@/lib/useEraTheme'
@@ -102,9 +103,11 @@ export default function App() {
 
         <Eras />
 
-        {/* Remaining sections land here in phases 7-9. The placeholders keep
-            the nav rail wired to real anchors in the meantime. */}
-        <section id="members" className="min-h-[60vh]" />
+        <Members />
+
+        {/* Credits lands here in phase 9 — it is blocked on the real
+            attribution list. The placeholder keeps the nav rail wired to a
+            real anchor in the meantime. */}
         <section id="credits" className="min-h-[40vh]" />
       </main>
     </div>

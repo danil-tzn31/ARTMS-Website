@@ -1,4 +1,7 @@
 export type EraId = 'dall' | 'icarus' | 'ego'
+
+/** Selects one of the drawn marks in components/AnimalMark.tsx. */
+export type AnimalMarkId = 'rabbit' | 'bird' | 'owl' | 'betta' | 'bat'
 export type MemberId = 'heejin' | 'haseul' | 'kimlip' | 'jinsoul' | 'choerry'
 
 export interface Track {
@@ -53,8 +56,8 @@ export interface Member {
   fullName: string
   born: string
   animal: string
-  /** Single glyph used as the member's mark. */
-  glyph: string
+  /** Which drawn mark represents them. */
+  mark: AnimalMarkId
   color: string
   /** Readable-on-color ink, precomputed rather than guessed at runtime. */
   onColor: string

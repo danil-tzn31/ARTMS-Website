@@ -113,11 +113,10 @@ src/
 | 3 | Shell — edge frame, nav rail, screen effects, scroll wiring | done |
 | 4 | Hero | done |
 | 5 | Preloader + brand assets + type scale | done |
-| 6 | Eras | next |
-| 7 | Member index | |
-| 8 | Member dossier | |
-| 9 | Footer + credits | blocked on the attribution list |
-| 10 | Polish, a11y, perf, deploy | |
+| 6 | Eras | done |
+| 7–8 | Member index + dossier | done |
+| 9 | Footer + credits | **blocked** — needs the real attribution list |
+| 10 | Polish, a11y, perf, deploy | next |
 
 ---
 
