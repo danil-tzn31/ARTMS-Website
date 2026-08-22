@@ -5,172 +5,175 @@
    a single stacking context so nothing below them ever needs a z-index war.
    --------------------------------------------------------------------------- */
 
-.fx-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  pointer-events: none;
-}
-
-/* --- Scanlines ------------------------------------------------------------ */
-
-.fx-scanlines {
-  opacity: var(--scanline-opacity);
-  mix-blend-mode: overlay;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgb(0 0 0 / 0.42) 0,
-    rgb(0 0 0 / 0.42) 1px,
-    transparent 1px,
-    transparent var(--scanline-pitch)
-  );
-  /* Slight over-height so the drift never exposes an edge. */
-  height: calc(100% + var(--scanline-pitch) * 2);
-  animation: fx-drift 900ms linear infinite;
-  will-change: transform;
-}
-
-@keyframes fx-drift {
-  to {
-    transform: translate3d(0, calc(var(--scanline-pitch) * -2), 0);
+/* Layered for the same reason as base.css — see the note there. */
+@layer components {
+  .fx-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
   }
-}
 
-/* A second, much slower band that sweeps down the screen — this is the part
-   that actually reads as a CRT rather than a texture. */
-.fx-sweep {
-  opacity: 0.06;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    var(--ink) 45%,
-    var(--ink) 55%,
-    transparent 100%
-  );
-  height: 34vh;
-  inset: auto 0 auto 0;
-  animation: fx-sweep 7s linear infinite;
-  will-change: transform;
-}
+  /* --- Scanlines ------------------------------------------------------------ */
 
-@keyframes fx-sweep {
-  0% {
-    transform: translate3d(0, -40vh, 0);
+  .fx-scanlines {
+    opacity: var(--scanline-opacity);
+    mix-blend-mode: overlay;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.42) 0,
+      rgb(0 0 0 / 0.42) 1px,
+      transparent 1px,
+      transparent var(--scanline-pitch)
+    );
+    /* Slight over-height so the drift never exposes an edge. */
+    height: calc(100% + var(--scanline-pitch) * 2);
+    animation: fx-drift 900ms linear infinite;
+    will-change: transform;
   }
-  100% {
-    transform: translate3d(0, 140vh, 0);
+
+  @keyframes fx-drift {
+    to {
+      transform: translate3d(0, calc(var(--scanline-pitch) * -2), 0);
+    }
   }
-}
 
-/* --- Grain ---------------------------------------------------------------- */
-
-.fx-grain {
-  opacity: var(--grain-opacity);
-  mix-blend-mode: overlay;
-}
-
-.fx-grain > svg {
-  width: 100%;
-  height: 100%;
-}
-
-/* --- Vignette ------------------------------------------------------------- */
-
-.fx-vignette {
-  background: radial-gradient(
-    ellipse at center,
-    transparent 42%,
-    color-mix(in srgb, var(--bg) 78%, black) 100%
-  );
-  opacity: 0.85;
-}
-
-/* --- Invert --------------------------------------------------------------- */
-
-/* Everything inverts, media included. That is the point — a half-inverted page
-   looks like a bug, a fully inverted one looks like a mode.
-
-   The filter MUST live on the root element, not on a wrapper div. A `filter`
-   value other than `none` makes an element a containing block for its fixed
-   and absolutely positioned descendants — the CSS spec exempts the document
-   root element and nothing else. On a wrapper, that exemption does not apply,
-   and everything `position: fixed` inside it silently becomes scroll-bound:
-   the edge frame, the scanline stack, the cursor, and — worst of all —
-   ScrollTrigger's pin, which is implemented with `position: fixed`. The hero
-   then scrolled away while its scrubbed timeline kept running, so the wordmark
-   collapsed to its docked size in mid-air. Invert mode looked like a broken
-   scroll animation; it was a broken containing block.
-
-   Measured before the fix, at scrollY 700 with invert on: the frame sat at
-   -672px, the scanlines at -704px, and the hero at -700px. With the filter on
-   :root they hold at 28, -4 and 0. */
-html[data-invert='true'] {
-  filter: invert(1) hue-rotate(180deg);
-}
-
-html {
-  transition: filter 220ms var(--ease-out-expo);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fx-scanlines,
+  /* A second, much slower band that sweeps down the screen — this is the part
+     that actually reads as a CRT rather than a texture. */
   .fx-sweep {
-    animation: none;
+    opacity: 0.06;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--ink) 45%,
+      var(--ink) 55%,
+      transparent 100%
+    );
+    height: 34vh;
+    inset: auto 0 auto 0;
+    animation: fx-sweep 7s linear infinite;
+    will-change: transform;
   }
-  .fx-sweep {
-    opacity: 0;
+
+  @keyframes fx-sweep {
+    0% {
+      transform: translate3d(0, -40vh, 0);
+    }
+    100% {
+      transform: translate3d(0, 140vh, 0);
+    }
   }
-}
 
-/* --- Ink bleed / grain on display type ------------------------------------ */
+  /* --- Grain ---------------------------------------------------------------- */
 
-/* SVG filters on very large text are expensive. They are opt-in per element,
-   promoted, and dropped entirely on small screens and under reduced motion. */
-.fx-inkbleed {
-  filter: url('#inkbleed');
-  will-change: filter;
-}
+  .fx-grain {
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+  }
 
-.fx-inkbleed-soft {
-  filter: url('#inkbleed-soft');
-  will-change: filter;
-}
+  .fx-grain > svg {
+    width: 100%;
+    height: 100%;
+  }
 
-@media (max-width: 767px), (prefers-reduced-motion: reduce) {
-  .fx-inkbleed,
+  /* --- Vignette ------------------------------------------------------------- */
+
+  .fx-vignette {
+    background: radial-gradient(
+      ellipse at center,
+      transparent 42%,
+      color-mix(in srgb, var(--bg) 78%, black) 100%
+    );
+    opacity: 0.85;
+  }
+
+  /* --- Invert --------------------------------------------------------------- */
+
+  /* Everything inverts, media included. That is the point — a half-inverted page
+     looks like a bug, a fully inverted one looks like a mode.
+
+     The filter MUST live on the root element, not on a wrapper div. A `filter`
+     value other than `none` makes an element a containing block for its fixed
+     and absolutely positioned descendants — the CSS spec exempts the document
+     root element and nothing else. On a wrapper, that exemption does not apply,
+     and everything `position: fixed` inside it silently becomes scroll-bound:
+     the edge frame, the scanline stack, the cursor, and — worst of all —
+     ScrollTrigger's pin, which is implemented with `position: fixed`. The hero
+     then scrolled away while its scrubbed timeline kept running, so the wordmark
+     collapsed to its docked size in mid-air. Invert mode looked like a broken
+     scroll animation; it was a broken containing block.
+
+     Measured before the fix, at scrollY 700 with invert on: the frame sat at
+     -672px, the scanlines at -704px, and the hero at -700px. With the filter on
+     :root they hold at 28, -4 and 0. */
+  html[data-invert='true'] {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  html {
+    transition: filter 220ms var(--ease-out-expo);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fx-scanlines,
+    .fx-sweep {
+      animation: none;
+    }
+    .fx-sweep {
+      opacity: 0;
+    }
+  }
+
+  /* --- Ink bleed / grain on display type ------------------------------------ */
+
+  /* SVG filters on very large text are expensive. They are opt-in per element,
+     promoted, and dropped entirely on small screens and under reduced motion. */
+  .fx-inkbleed {
+    filter: url('#inkbleed');
+    will-change: filter;
+  }
+
   .fx-inkbleed-soft {
-    filter: none;
-    will-change: auto;
+    filter: url('#inkbleed-soft');
+    will-change: filter;
   }
-}
 
-/* --- Chromatic aberration on fast scroll ---------------------------------- */
+  @media (max-width: 767px), (prefers-reduced-motion: reduce) {
+    .fx-inkbleed,
+    .fx-inkbleed-soft {
+      filter: none;
+      will-change: auto;
+    }
+  }
 
-/* --velocity is written by the Lenis listener (0 at rest, ~1 at speed). */
-.fx-chroma {
-  text-shadow:
-    calc(var(--velocity, 0) * -1.6px) 0 0 color-mix(in srgb, var(--accent) 70%, red),
-    calc(var(--velocity, 0) * 1.6px) 0 0 color-mix(in srgb, var(--accent) 70%, cyan);
-}
+  /* --- Chromatic aberration on fast scroll ---------------------------------- */
 
-@media (prefers-reduced-motion: reduce) {
+  /* --velocity is written by the Lenis listener (0 at rest, ~1 at speed). */
   .fx-chroma {
-    text-shadow: none;
+    text-shadow:
+      calc(var(--velocity, 0) * -1.6px) 0 0 color-mix(in srgb, var(--accent) 70%, red),
+      calc(var(--velocity, 0) * 1.6px) 0 0 color-mix(in srgb, var(--accent) 70%, cyan);
   }
-}
 
-/* --- Era photo cascade ----------------------------------------------------- */
+  @media (prefers-reduced-motion: reduce) {
+    .fx-chroma {
+      text-shadow: none;
+    }
+  }
 
-/* Widths are authored per photo for the desktop composition. At phone widths
-   the same vw values produce postage stamps in a lot of empty column, so each
-   shot carries a second, larger width used below the lg breakpoint. Handled
-   here rather than inline because a component cannot write a media query. */
-[data-shot] {
-  width: var(--shot-w-sm);
-}
+  /* --- Era photo cascade ----------------------------------------------------- */
 
-@media (min-width: 1024px) {
+  /* Widths are authored per photo for the desktop composition. At phone widths
+     the same vw values produce postage stamps in a lot of empty column, so each
+     shot carries a second, larger width used below the lg breakpoint. Handled
+     here rather than inline because a component cannot write a media query. */
   [data-shot] {
-    width: var(--shot-w);
+    width: var(--shot-w-sm);
+  }
+
+  @media (min-width: 1024px) {
+    [data-shot] {
+      width: var(--shot-w);
+    }
   }
 }

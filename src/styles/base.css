@@ -2,182 +2,200 @@
    Base
    --------------------------------------------------------------------------- */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+/* Everything below is layered on purpose.
+ *
+ * Tailwind v4 puts its utilities in `@layer utilities`, and an UNLAYERED rule
+ * beats any layered one regardless of specificity. This file's `button` reset
+ * sets `padding: 0` — unlayered, that silently killed every px-/py- utility on
+ * every button in the project. Rows that looked like they had padding had none,
+ * and no error said so.
+ *
+ * Element resets therefore go in `@layer base` (utilities win over them, which
+ * is the point of a reset) and the `.u-*` primitives go in `@layer components`
+ * (utilities can still override an individual case). Only the reduced-motion
+ * override stays unlayered: it is a safety valve and has to beat everything.
+ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    /* Lenis drives scrolling; native smooth-scroll would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    line-height: 1.5;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 120ms linear;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
 }
 
-html {
-  /* Lenis drives scrolling; native smooth-scroll would fight it. */
-  scroll-behavior: auto;
-  -webkit-text-size-adjust: 100%;
-}
+@layer components {
+  /* ---------------------------------------------------------------------------
+     Type primitives
+     --------------------------------------------------------------------------- */
 
-html.lenis,
-html.lenis body {
-  height: auto;
-}
+  .u-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 75%;
+    line-height: 0.82;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    margin: 0;
+  }
 
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
+  /* Micro type is deliberately small relative to the display sizes, but "micro"
+     still has to mean readable. These sit at 13–15px, not the 9–10px that
+     reference sites like gobold use — that scale looks sharp in a screenshot and
+     is genuinely hard to read on a real screen. The size *gap* between display
+     and label is what carries the visual system, and the gap is already enormous
+     when the headline is 25vw. */
+  .u-mono {
+    font-family: var(--font-mono);
+    font-size: clamp(13px, 0.95vw, 15px);
+    line-height: 1.45;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
 
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
+  .u-mono-sm {
+    font-family: var(--font-mono);
+    font-size: clamp(12px, 0.85vw, 14px);
+    line-height: 1.4;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
 
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 15px;
-  line-height: 1.5;
-  overflow-x: clip;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 120ms linear;
-}
+  /* Body-length prose. Not uppercase, not tracked out — the only place on the
+     site where mono behaves like text rather than like a label. */
+  .u-body {
+    font-family: var(--font-mono);
+    font-size: clamp(14px, 1.05vw, 17px);
+    line-height: 1.65;
+    letter-spacing: 0;
+    text-transform: none;
+  }
 
-::selection {
-  background: var(--accent);
-  color: var(--bg);
-}
+  .u-serif {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  .u-kr {
+    font-family: var(--font-kr);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
 
-button {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-}
+  .u-dim {
+    color: var(--ink-dim);
+  }
 
-img,
-video {
-  display: block;
-  max-width: 100%;
-}
+  /* Chrome that sits over photography or video needs a floor on legibility that
+     does not depend on what is behind it. */
+  .u-over-media {
+    text-shadow: 0 1px 10px rgb(0 0 0 / 0.65);
+  }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
+  /* Hairline rules used throughout the layout. Kept as classes rather than
+     Tailwind borders so a single token change restyles every rule on the page. */
+  .u-rule {
+    border-color: var(--rule);
+    border-style: solid;
+    border-width: 0;
+  }
 
-/* ---------------------------------------------------------------------------
-   Type primitives
-   --------------------------------------------------------------------------- */
+  /* ---------------------------------------------------------------------------
+     Accessibility
+     --------------------------------------------------------------------------- */
 
-.u-display {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 75%;
-  line-height: 0.82;
-  letter-spacing: -0.025em;
-  text-transform: uppercase;
-  margin: 0;
-}
+  .u-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
 
-/* Micro type is deliberately small relative to the display sizes, but "micro"
-   still has to mean readable. These sit at 13–15px, not the 9–10px that
-   reference sites like gobold use — that scale looks sharp in a screenshot and
-   is genuinely hard to read on a real screen. The size *gap* between display
-   and label is what carries the visual system, and the gap is already enormous
-   when the headline is 25vw. */
-.u-mono {
-  font-family: var(--font-mono);
-  font-size: clamp(13px, 0.95vw, 15px);
-  line-height: 1.45;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
+  .u-skip-link {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    padding: 10px 16px;
+    background: var(--accent);
+    color: var(--bg);
+    transform: translateY(-120%);
+    transition: transform 160ms var(--ease-out-expo);
+  }
 
-.u-mono-sm {
-  font-family: var(--font-mono);
-  font-size: clamp(12px, 0.85vw, 14px);
-  line-height: 1.4;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-/* Body-length prose. Not uppercase, not tracked out — the only place on the
-   site where mono behaves like text rather than like a label. */
-.u-body {
-  font-family: var(--font-mono);
-  font-size: clamp(14px, 1.05vw, 17px);
-  line-height: 1.65;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.u-serif {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  text-transform: none;
-}
-
-.u-kr {
-  font-family: var(--font-kr);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-
-.u-dim {
-  color: var(--ink-dim);
-}
-
-/* Chrome that sits over photography or video needs a floor on legibility that
-   does not depend on what is behind it. */
-.u-over-media {
-  text-shadow: 0 1px 10px rgb(0 0 0 / 0.65);
-}
-
-/* Hairline rules used throughout the layout. Kept as classes rather than
-   Tailwind borders so a single token change restyles every rule on the page. */
-.u-rule {
-  border-color: var(--rule);
-  border-style: solid;
-  border-width: 0;
-}
-
-/* ---------------------------------------------------------------------------
-   Accessibility
-   --------------------------------------------------------------------------- */
-
-.u-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-
-.u-skip-link {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 200;
-  padding: 10px 16px;
-  background: var(--accent);
-  color: var(--bg);
-  transform: translateY(-120%);
-  transition: transform 160ms var(--ease-out-expo);
-}
-
-.u-skip-link:focus-visible {
-  transform: translateY(0);
+  .u-skip-link:focus-visible {
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
