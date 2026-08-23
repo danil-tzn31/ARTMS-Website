@@ -16,14 +16,50 @@ import { useFocusTrap } from '@/lib/useFocusTrap'
  * changed shape on every tab press — and a 0.70 portrait at 56vw came out
  * ~1150px tall, running off the bottom of a laptop screen.
  *
- * One frame, and the image is CONTAINed inside it rather than cropped. This is
- * an archive: the photograph is the subject, and cropping a member's portrait
- * down to a landscape band to make the grid tidy would be vandalism. Portraits
- * letterbox at the sides, landscapes very nearly fill it, and the frame never
- * moves — which is what makes flipping between eras feel like turning pages
- * rather than reflowing a page.
+ * One frame, and the image fills it. Letterboxing was tried first and rejected:
+ * a contained image leaves grey bars, and filling those bars with a blurred
+ * copy of the photo still left a visible seam where sharp met soft. A frame
+ * that is actually full is cleaner than any amount of work spent disguising a
+ * frame that is not.
+ *
+ * The cost is a real crop, so the crop is aimed — see FOCUS below. The frame
+ * never moves between eras, which is what makes flipping through them feel
+ * like turning pages rather than reflowing a page.
  */
 const PHOTO_FRAME = 4 / 3
+
+/**
+ * Where the crop is aimed, per photograph.
+ *
+ * The frame is 4:3 and the images fill it, so a 0.70 portrait loses a little
+ * over half its height. A centred crop on one of those takes the chin and the
+ * shoulders and leaves the eyes above the frame — which is why "just set
+ * object-fit: cover" is only half an answer. Each value below was checked
+ * against the actual crop rather than assumed.
+ *
+ * The number is a percentage down the SOURCE image that lands at the same
+ * percentage down the frame, so smaller pulls the crop upward.
+ */
+const FOCUS: Record<string, string> = {
+  // Dall — 0.70 portraits, the heaviest crop of the three eras.
+  'heejin-dall': 'center 18%',
+  'haseul-dall': 'center 20%',
+  'kimlip-dall': 'center 18%',
+  'jinsoul-dall': 'center 20%',
+  // Framed tighter at source than the other four, so 18% took her chin off.
+  'choerry-dall': 'center 30%',
+  // Club Icarus — 1.26 landscapes, a light trim at the sides.
+  'heejin-icarus': 'center 32%',
+  'haseul-icarus': 'center 32%',
+  'kimlip-icarus': 'center 32%',
+  'jinsoul-icarus': 'center 30%',
+  'choerry-icarus': 'center 32%',
+  // Hyper-Ego — 1.42 landscapes, barely cropped at all.
+  'heejin-ego': 'center 42%',
+  'kimlip-ego': 'center 40%',
+  'jinsoul-ego': 'center 40%',
+  'choerry-ego': 'center 40%',
+}
 
 interface MemberDossierProps {
   member: Member | null
@@ -273,7 +309,7 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
                   alt={`${member.name} — ${era.title}`}
                   sizes="(max-width: 1024px) 92vw, 56vw"
                   ratio={PHOTO_FRAME}
-                  fit="contain"
+                  focus={FOCUS[slug] ?? 'center 30%'}
                   className="h-full w-full"
                   priority
                 />
@@ -316,8 +352,13 @@ function AbsencePlacard({
     <div
       className="flex h-full w-full flex-col justify-center px-[8%] py-[8%]"
       style={{
-        border: '1px solid var(--rule-strong)',
-        background: `color-mix(in srgb, ${member.color} 9%, transparent)`,
+        // No outline. The placard sits in the same frame a photograph would,
+        // and a boxed-in panel would announce itself as a fallback state. It
+        // reads as the member's own colour filling the space instead.
+        background: `linear-gradient(150deg,
+          color-mix(in srgb, ${member.color} 20%, transparent) 0%,
+          color-mix(in srgb, ${member.color} 6%, transparent) 55%,
+          transparent 100%)`,
       }}
     >
       <p className="u-mono-sm" style={{ color: member.color }}>

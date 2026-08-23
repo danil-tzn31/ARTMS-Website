@@ -9,18 +9,19 @@ interface PictureProps {
   /**
    * Frame aspect ratio (width / height). Omit to use the source's own.
    *
-   * Give this a value wherever several photographs sit together: the scans in
+   * Give this a value wherever several photographs sit together. The scans in
    * this archive run from 0.70 to 2.54, so letting each one set its own frame
-   * makes a row of them look like a pile rather than a set.
+   * makes a set of them look like a pile of loose prints.
    */
   ratio?: number
   /**
-   * `cover` fills the frame and crops; `contain` fits the whole image inside
-   * it and letterboxes. Use `contain` where the photograph is the subject and
-   * cropping it would be vandalism — a member's portrait, for instance.
+   * object-position for the crop, e.g. 'center 20%'.
+   *
+   * The image always fills its frame, which means a frame that disagrees with
+   * the source crops it — a 0.70 portrait in a 4:3 frame loses just over half
+   * its height. Aim this wherever that matters. A centred crop on a portrait
+   * takes the chin and leaves the eyes above the frame.
    */
-  fit?: 'cover' | 'contain'
-  /** object-position. Portraits usually want 'center 25%' so faces survive a crop. */
   focus?: string
   className?: string
   imgClassName?: string
@@ -31,13 +32,19 @@ interface PictureProps {
  * AVIF → WebP → nothing, with the manifest's 20px LQIP painted underneath as a
  * blurred ground until the real file decodes. The placeholder is a data URI
  * baked at build time, so it costs no extra request and never flashes empty.
+ *
+ * Images always cover their frame. `object-fit: contain` was tried and dropped:
+ * it leaves the rest of the frame empty, an empty frame is a grey bar, and a
+ * bar reads as a border nobody asked for. Filling those bars with a blurred
+ * copy of the photo fixed the colour but left a visible seam where sharp met
+ * soft. A frame that is genuinely full beats any amount of work spent
+ * disguising one that is not — the cost is a real crop, so crops get aimed.
  */
 export function Picture({
   slug,
   alt,
   sizes,
   ratio,
-  fit = 'cover',
   focus = 'center',
   className,
   imgClassName,
@@ -53,24 +60,15 @@ export function Picture({
     return null
   }
 
-  // The LQIP is only a useful ground when the image will fill the frame. Under
-  // `contain` it would bleed out around the letterbox as a blurred halo, which
-  // reads as a rendering fault rather than as a placeholder.
-  const showLqip = fit === 'cover'
-
   return (
     <div
       className={className}
       style={{
         aspectRatio: ratio ?? record.aspect,
         overflow: 'hidden',
-        ...(showLqip
-          ? {
-              backgroundImage: `url(${record.lqip})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }
-          : { background: 'color-mix(in srgb, var(--ink) 6%, transparent)' }),
+        backgroundImage: `url(${record.lqip})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       <picture>
@@ -89,7 +87,7 @@ export function Picture({
           style={{
             width: '100%',
             height: '100%',
-            objectFit: fit,
+            objectFit: 'cover',
             objectPosition: focus,
             opacity: loaded ? 1 : 0,
             transition: 'opacity 520ms var(--ease-out-expo)',
