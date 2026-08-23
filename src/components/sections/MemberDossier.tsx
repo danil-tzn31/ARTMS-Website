@@ -43,7 +43,8 @@ const PHOTO_FRAME = 4 / 3
 const FOCUS: Record<string, string> = {
   // Dall — 0.70 portraits, the heaviest crop of the three eras.
   'heejin-dall': 'center 18%',
-  'haseul-dall': 'center 20%',
+  // Tightly framed at source, like Choerry's — 20% took her chin off.
+  'haseul-dall': 'center 32%',
   'kimlip-dall': 'center 18%',
   'jinsoul-dall': 'center 20%',
   // Framed tighter at source than the other four, so 18% took her chin off.
