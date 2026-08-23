@@ -8,6 +8,23 @@ import { formatDate, formatDotted } from '@/lib/format'
 import { getLenis } from '@/lib/useLenis'
 import { useFocusTrap } from '@/lib/useFocusTrap'
 
+/**
+ * The dossier's photo frame, fixed for every member and every era.
+ *
+ * The scans do not agree with each other: Dall shots are 0.70 portraits, Icarus
+ * and Ego are ~1.26–1.43 landscapes. Sized from their own aspects, the frame
+ * changed shape on every tab press — and a 0.70 portrait at 56vw came out
+ * ~1150px tall, running off the bottom of a laptop screen.
+ *
+ * One frame, and the image is CONTAINed inside it rather than cropped. This is
+ * an archive: the photograph is the subject, and cropping a member's portrait
+ * down to a landscape band to make the grid tidy would be vandalism. Portraits
+ * letterbox at the sides, landscapes very nearly fill it, and the frame never
+ * moves — which is what makes flipping between eras feel like turning pages
+ * rather than reflowing a page.
+ */
+const PHOTO_FRAME = 4 / 3
+
 interface MemberDossierProps {
   member: Member | null
   onClose: () => void
@@ -243,17 +260,27 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
             aria-labelledby={`dossier-tab-${era.id}`}
             className="mt-6"
           >
-            {slug ? (
-              <Picture
-                slug={slug}
-                alt={`${member.name} — ${era.title}`}
-                sizes="(max-width: 1024px) 92vw, 56vw"
-                className="w-full"
-                priority
-              />
-            ) : (
-              <AbsencePlacard member={member} era={era} absence={absence} />
-            )}
+            {/* The frame is declared here, once, so the photo and the absence
+                placard are the same box. Switching to an era a member was not
+                in should change what is inside the frame, never the frame. */}
+            <div
+              style={{ aspectRatio: PHOTO_FRAME, maxHeight: '68vh' }}
+              className="w-full"
+            >
+              {slug ? (
+                <Picture
+                  slug={slug}
+                  alt={`${member.name} — ${era.title}`}
+                  sizes="(max-width: 1024px) 92vw, 56vw"
+                  ratio={PHOTO_FRAME}
+                  fit="contain"
+                  className="h-full w-full"
+                  priority
+                />
+              ) : (
+                <AbsencePlacard member={member} era={era} absence={absence} />
+              )}
+            </div>
 
             <p className="u-mono mt-4 flex flex-wrap items-center gap-x-5 gap-y-1">
               <span>{era.title}</span>
@@ -287,7 +314,7 @@ function AbsencePlacard({
 }) {
   return (
     <div
-      className="flex min-h-[44vh] flex-col justify-center px-[8%] py-[10%]"
+      className="flex h-full w-full flex-col justify-center px-[8%] py-[8%]"
       style={{
         border: '1px solid var(--rule-strong)',
         background: `color-mix(in srgb, ${member.color} 9%, transparent)`,

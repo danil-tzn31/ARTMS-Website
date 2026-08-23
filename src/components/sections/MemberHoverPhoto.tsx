@@ -87,7 +87,17 @@ export function MemberHoverPhoto({ member }: MemberHoverPhotoProps) {
                   transition: 'opacity 220ms var(--ease-out-expo)',
                 }}
               >
-                <Picture slug={slug} alt="" sizes="280px" className="w-full" />
+                <Picture
+                  slug={slug}
+                  alt=""
+                  sizes="280px"
+                  // All five are Dall portraits, so one 3:4 frame crops them
+                  // consistently. Aimed a little high — a centred crop on a
+                  // 0.70 portrait cuts the face in half.
+                  ratio={3 / 4}
+                  focus="center 22%"
+                  className="w-full"
+                />
               </div>
             )
           })}

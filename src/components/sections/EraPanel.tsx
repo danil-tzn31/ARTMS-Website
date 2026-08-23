@@ -21,7 +21,21 @@ interface Shot {
   rotate: number
   z: number
   depth: number
+  /**
+   * Frame aspect ratio. Defaults to FRAME (4:3).
+   *
+   * The scans arrive between 1.26 and 2.54, and letting each keep its own
+   * shape made the cascade look like a pile of loose prints. Every frame is
+   * now authored, and the image covers it — so the composition is a set of
+   * deliberate crops rather than an accident of how each photo was scanned.
+   */
+  ratio?: number
+  /** object-position for the crop. Default centre. */
+  focus?: string
 }
+
+/** The house frame for era photography. */
+const FRAME = 4 / 3
 
 /**
  * Phone width for a shot: roughly double the desktop vw, capped so it still
@@ -47,7 +61,11 @@ const LAYOUTS: Record<Era['id'], Shot[]> = {
     { top: '11%', left: '50vw', w: '44vw', rotate: 1.1, z: 12, depth: 0.6 },
     { top: '38%', left: '-6vw', w: '36vw', rotate: -2, z: 1, depth: 1.1 },
     { top: '58%', left: '29vw', w: '31vw', rotate: 1.6, z: 12, depth: 1.4 },
-    { top: '80%', left: '-9vw', w: '80vw', rotate: 0, z: 1, depth: 0.4 },
+    // The one authored exception. Its source is a 2.54:1 panorama with the
+    // members spread across the full width; cropping that to 4:3 keeps the
+    // middle third and throws the rest away. A panorama is a different kind of
+    // photograph, so it gets a frame that admits it.
+    { top: '80%', left: '-9vw', w: '80vw', rotate: 0, z: 1, depth: 0.4, ratio: 12 / 5 },
   ],
   ego: [
     { top: '12%', left: '4vw', w: '47vw', rotate: 1, z: 1, depth: 0.6 },
@@ -253,6 +271,8 @@ export function EraPanel({ era, index }: EraPanelProps) {
                 slug={slug}
                 alt=""
                 sizes="(max-width: 1024px) 92vw, 46vw"
+                ratio={shot.ratio ?? FRAME}
+                focus={shot.focus ?? 'center 40%'}
                 className="w-full"
               />
               {/* Dimming plate rather than an opacity change on the image, so
