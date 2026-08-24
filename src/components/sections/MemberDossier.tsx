@@ -217,7 +217,7 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
 
             <dt className="u-dim">Animal</dt>
             <dd className="flex items-center gap-2">
-              <AnimalMark animal={member.mark} size={22} />
+              <AnimalMark animal={member.mark} size={24} />
               {member.animal}
             </dd>
 

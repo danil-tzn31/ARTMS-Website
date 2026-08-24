@@ -96,7 +96,7 @@ export function MemberRow({
           {/* Metadata rail. Hidden below md — at phone widths the name needs
               the whole row, and the same facts are one tap away. */}
           <span className="hidden shrink-0 items-center gap-[2vw] md:flex">
-            <AnimalMark animal={member.mark} size={30} />
+            <AnimalMark animal={member.mark} size={34} />
             <span className="u-mono w-[11ch]">{member.animal}</span>
             <span
               className="u-mono tabular-nums"
