@@ -11,6 +11,7 @@ import { Wordmark } from '@/components/chrome/Wordmark'
 import { Hero } from '@/components/sections/Hero'
 import { Eras } from '@/components/sections/Eras'
 import { Members } from '@/components/sections/Members'
+import { Credits } from '@/components/sections/Credits'
 import { useLenis, useScrollVelocity } from '@/lib/useLenis'
 import { useInvert } from '@/lib/useInvert'
 import { useEraTheme } from '@/lib/useEraTheme'
@@ -105,10 +106,7 @@ export default function App() {
 
         <Members />
 
-        {/* Credits lands here in phase 9 — it is blocked on the real
-            attribution list. The placeholder keeps the nav rail wired to a
-            real anchor in the meantime. */}
-        <section id="credits" className="min-h-[40vh]" />
+        <Credits inverted={inverted} onToggleInvert={toggle} />
       </main>
     </div>
   )

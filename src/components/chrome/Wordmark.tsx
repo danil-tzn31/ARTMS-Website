@@ -12,11 +12,21 @@ const ASPECT = 6.5813
 interface WordmarkProps {
   /** Rendered height in px. Width follows from the mark's own aspect ratio. */
   height?: number
+  /**
+   * Fill the container's width instead, deriving height from the aspect ratio.
+   * Used for the closing mark, which runs the full width of the page.
+   */
+  fluid?: boolean
   className?: string
   title?: string
 }
 
-export function Wordmark({ height = 22, className = '', title }: WordmarkProps) {
+export function Wordmark({
+  height = 22,
+  fluid = false,
+  className = '',
+  title,
+}: WordmarkProps) {
   return (
     <span
       role="img"
@@ -24,8 +34,9 @@ export function Wordmark({ height = 22, className = '', title }: WordmarkProps) 
       className={className}
       style={{
         display: 'block',
-        height,
-        width: height * ASPECT,
+        ...(fluid
+          ? { width: '100%', aspectRatio: ASPECT }
+          : { height, width: height * ASPECT }),
         background: 'currentColor',
         maskImage: `url(${import.meta.env.BASE_URL}brand/artms-wordmark.png)`,
         maskSize: 'contain',
