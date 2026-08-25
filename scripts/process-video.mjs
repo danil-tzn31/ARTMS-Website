@@ -29,7 +29,7 @@ const only = process.argv.includes('--only')
 // VP9 is opt-in. Every browser that can run this site plays H.264, and a VP9
 // pass over 60 s of denoised 960p costs minutes of CPU to save bytes nobody
 // downloads twice. Run `npm run video -- --only webm` if you want it.
-const DEFAULT_JOBS = ['mp4', 'poster']
+const DEFAULT_JOBS = ['mp4', 'poster', 'og']
 
 // The master is heavily grained, and grain is the enemy of inter-frame
 // compression — a straight 720p/CRF30 pass still came out at 17 MB. Denoising
@@ -38,6 +38,14 @@ const DEFAULT_JOBS = ['mp4', 'poster']
 const VF = 'scale=960:-2,hqdn3d=4:3:6:4.5,fps=24'
 const exists = (p) => access(p).then(() => true, () => false)
 const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`
+
+/** Output filename per job. */
+const OUTPUTS = {
+  mp4: 'hero.mp4',
+  webm: 'hero.webm',
+  poster: 'hero.jpg',
+  og: 'og.jpg',
+}
 
 /** @type {Record<string, string[]>} */
 const JOBS = {
@@ -58,6 +66,15 @@ const JOBS = {
     '-ss', '1.5', '-i', IN, '-frames:v', '1', '-vf', 'scale=1280:-2',
     '-q:v', '4', '-y',
   ],
+  // Open Graph card. 1200x630 is the size every platform crops to, so it is
+  // produced at that size rather than left to each of them to cut differently
+  // out of a 16:9 poster. Graded down so the wordmark overlay stays legible on
+  // a light timeline as well as a dark one.
+  og: [
+    '-ss', '2.6', '-i', IN, '-frames:v', '1',
+    '-vf', 'scale=1200:-2,crop=1200:630,eq=brightness=-0.06:saturation=0.85',
+    '-q:v', '3', '-y',
+  ],
 }
 
 async function main() {
@@ -69,8 +86,10 @@ async function main() {
 
   for (const [name, args] of Object.entries(JOBS)) {
     if (only ? only !== name : !DEFAULT_JOBS.includes(name)) continue
-    const ext = name === 'poster' ? 'jpg' : name
-    const out = join(OUT, `hero.${ext}`)
+    // Named per job, not per extension. Deriving the filename from the format
+    // meant 'poster' and 'og' both resolved to hero.jpg, and the second one
+    // silently overwrote the first.
+    const out = join(OUT, OUTPUTS[name])
     const t0 = Date.now()
     process.stdout.write(`  … ${name}`)
     await run('ffmpeg', ['-v', 'error', ...args, out], { maxBuffer: 1 << 24 })

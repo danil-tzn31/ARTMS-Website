@@ -16,13 +16,18 @@ export default defineConfig({
     assetsInlineLimit: 2048,
     rollupOptions: {
       output: {
-        // Split the two animation libraries out of the app chunk. They change
-        // far less often than the page code, so they stay cached across
-        // deploys instead of being re-downloaded with every copy tweak.
+        // GSAP only. It is used by every section, so a stable vendor chunk
+        // keeps it cached across deploys instead of being re-downloaded with
+        // every copy tweak.
+        //
+        // Framer Motion is deliberately NOT listed. Naming a chunk manually
+        // promotes it into the entry's static graph, which defeats the dynamic
+        // import in Members.tsx: the dossier split into its own file but
+        // framer-motion stayed modulepreloaded on first paint, so the code
+        // split bought nothing. Left alone, the dynamic import produces its own
+        // chunk and it loads on hover instead.
         manualChunks(id) {
           if (id.includes('node_modules/gsap')) return 'gsap'
-          if (id.includes('node_modules/framer-motion')) return 'motion'
-          if (id.includes('node_modules/motion-')) return 'motion'
           return undefined
         },
       },

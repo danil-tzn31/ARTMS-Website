@@ -244,8 +244,12 @@ export function EraPanel({ era, index }: EraPanelProps) {
       }
     >
       {/* Photo cascade. Sits at mixed z so some frames run under the type and
-          some over it. */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          some over it.
+
+          Not aria-hidden. The scatter is a compositional device, but the
+          photographs themselves are the archive — hiding them would leave a
+          screen-reader user with the tracklist and nothing to look at. */}
+      <div className="pointer-events-none absolute inset-0">
         {era.photos.map((slug, i) => {
           const shot = shots[i]
           if (!shot) return null
@@ -269,7 +273,7 @@ export function EraPanel({ era, index }: EraPanelProps) {
             >
               <Picture
                 slug={slug}
-                alt=""
+                alt={`ARTMS in the ${era.title} era — group photograph ${i + 1} of ${era.photos.length}`}
                 sizes="(max-width: 1024px) 92vw, 46vw"
                 ratio={shot.ratio ?? FRAME}
                 focus={shot.focus ?? 'center 40%'}
@@ -324,8 +328,12 @@ export function EraPanel({ era, index }: EraPanelProps) {
               } as React.CSSProperties
             }
           >
+            {/* The visual lines are hand-broken, so read together they come out
+                as "ClubIcarus". The heading announces the real title and the
+                broken lines are decoration. */}
+            <span className="u-sr-only">{era.title}</span>
             {lines.map((line) => (
-              <span key={line} data-title-line className="block">
+              <span key={line} data-title-line aria-hidden="true" className="block">
                 {line}
               </span>
             ))}

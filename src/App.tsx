@@ -63,6 +63,7 @@ export default function App() {
         <div className="pointer-events-auto absolute -top-3 left-3">
           <a
             href="#hero"
+            aria-label="ARTMS — back to top"
             className="block px-2 py-1"
             style={{ background: 'var(--bg)', color: 'var(--ink)' }}
             data-cursor="Top"

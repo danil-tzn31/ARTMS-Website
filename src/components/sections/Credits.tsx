@@ -148,6 +148,7 @@ export function Credits({ inverted, onToggleInvert }: CreditsProps) {
           className="u-serif mt-[8vh] max-w-[24ch]"
           style={{ fontSize: 'clamp(1.5rem, 3.2vw, 3.4rem)', lineHeight: 1.12 }}
         >
+          <span className="u-sr-only">Credits — </span>
           <span className="block">None of this is mine.</span>
           <span className="block" style={{ paddingLeft: 'clamp(1rem, 5vw, 5.5rem)' }}>
             It is only gathered.

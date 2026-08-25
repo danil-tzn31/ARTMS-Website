@@ -115,8 +115,20 @@ src/
 | 5 | Preloader + brand assets + type scale | done |
 | 6 | Eras | done |
 | 7–8 | Member index + dossier | done |
-| 9 | Footer + credits | **blocked** — needs the real attribution list |
-| 10 | Polish, a11y, perf, deploy | next |
+| 9 | Footer + credits | done |
+| 10 | Polish, a11y, perf, deploy | done |
+
+## Measured
+
+| | Target | Actual |
+|---|---|---|
+| JS, first load (gzip) | < 130 kB | **127 kB** — app 82.7 + GSAP 44.4 |
+| Deferred (gzip) | — | 43.1 kB dossier + Framer Motion, fetched on hover |
+| CSS (gzip) | < 12 kB | **6.9 kB** |
+| LCP (local) | < 2.5 s | **0.50 s** |
+| CLS | < 0.1 | **0.0001** |
+| Horizontal scroll | none | none at 390 / 768 / 1024 / 1440 / 1920 |
+| Tab stops | all visible | 36, all with a focus ring |
 
 ---
 
