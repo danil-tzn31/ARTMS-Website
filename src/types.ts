@@ -38,6 +38,15 @@ export interface Era {
    * stagger.
    */
   statement: string[]
+  /**
+   * Which track the statement is quoted from, e.g. 'Virtual Angel'.
+   *
+   * Rendered as a small credit beneath the line. Quoted words set at statement
+   * size and left unattributed read as the site's own writing, which is both a
+   * missing credit and a slightly dishonest one — the whole footer is built
+   * around naming whose work this is. Left undefined, no credit renders.
+   */
+  statementSource?: string
   palette: {
     bg: string
     ink: string

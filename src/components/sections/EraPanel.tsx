@@ -374,6 +374,18 @@ export function EraPanel({ era, index }: EraPanelProps) {
             ))}
           </p>
 
+          {era.statementSource && (
+            <p
+              data-panel-fade
+              className="u-mono u-dim u-over-media mt-5"
+              style={{
+                paddingLeft: `calc(clamp(1rem, 6vw, 7rem) * ${STATEMENT_INDENT[1]})`,
+              }}
+            >
+              — {era.statementSource}
+            </p>
+          )}
+
           <div data-panel-fade className="u-over-media mt-[11vh]">
             <p className="u-mono u-dim">{era.releaseType}</p>
             <p

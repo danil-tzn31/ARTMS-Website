@@ -8,6 +8,15 @@ import type { Era } from '@/types'
  * array — one entry per rendered line, each with its own indent. Rewrite them
  * freely; nothing else needs to change.
  *
+ * The current lines are drawn from each record and were chosen by the site's
+ * owner. Where a break falls is a typographic decision, which is why the lines
+ * are authored rather than wrapped.
+ *
+ * `statementSource` names the track the line comes from. It is deliberately
+ * unset: guessing which song a lyric is from would be inventing an
+ * attribution, which is the one thing the credits section exists to avoid.
+ * Fill in the three track names and the credit appears under each statement.
+ *
  *   statement: ['Your first line.', 'Your second.'],
  *
  * Two or three lines works. Keep each under about 40 characters, or it will
@@ -29,7 +38,7 @@ export const ERAS: Era[] = [
     releaseType: '1st Studio Album',
     released: '2024-05-31',
     titleTrack: 'Virtual Angel',
-    statement: ['Five voices arrive as one.', 'Angel software, booting.'],
+    statement: ['An illusion in delirium.', 'Sheds light to my manipulated memories'],
     tracks: [
       { no: 1, title: 'url' },
       { no: 2, title: 'Virtual Angel', isTitleTrack: true },
@@ -59,7 +68,7 @@ export const ERAS: Era[] = [
     releaseType: '1st Mini Album',
     released: '2025-06-13',
     titleTrack: 'Icarus',
-    statement: ['Fly close enough and the wax gives.', 'Dance anyway.'],
+    statement: ['In the heat of it all.', 'I am reborn again'],
     tracks: [
       { no: 1, title: 'Club for the Broken' },
       { no: 2, title: 'Icarus', isTitleTrack: true },
@@ -89,7 +98,7 @@ export const ERAS: Era[] = [
     releaseType: '2nd Mini Album',
     released: '2026-08-07',
     titleTrack: 'Blue Blood',
-    statement: ['The fall was the point.', 'What lands is louder.'],
+    statement: ['Under you pixel light,', 'I lose myself again'],
     tracks: [
       { no: 1, title: 'From Wings To Soul' },
       { no: 2, title: 'BORN STUNNER', isPreRelease: true },
