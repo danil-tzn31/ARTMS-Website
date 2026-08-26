@@ -8,9 +8,9 @@ import type { Era } from '@/types'
  * array — one entry per rendered line, each with its own indent. Rewrite them
  * freely; nothing else needs to change.
  *
- * The current lines are drawn from each record and were chosen by the site's
- * owner. Where a break falls is a typographic decision, which is why the lines
- * are authored rather than wrapped.
+ * The current lines are drawn from each record and chosen by hand. Where a
+ * break falls is a typographic decision, which is why the lines are authored
+ * rather than wrapped.
  *
  * `statementSource` names the track the line comes from. It is deliberately
  * unset: guessing which song a lyric is from would be inventing an

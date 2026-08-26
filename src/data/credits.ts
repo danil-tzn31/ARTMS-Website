@@ -5,10 +5,18 @@ export interface Credit {
   name: string
   url?: string
   note?: string
+  /**
+   * Render the name exactly as written, ignoring the mono type's uppercase
+   * default. Set it on handles and usernames: they are written lowercase, and
+   * Space Mono's capital @ is easily mistaken for an 'a' — '@pika_chuuves'
+   * came out reading as 'aPIKA_CHUUVES'. A credit that misreads is a broken
+   * credit, and a username that misreads does not resolve.
+   */
+  verbatim?: boolean
 }
 
 /**
- * Attribution, supplied by the site's owner.
+ * Attribution, gathered by hand.
  *
  * Nothing here is inferred or filled in. Every photograph on this site belongs
  * to someone, and a credits section that guesses is worse than one that is
@@ -25,6 +33,7 @@ export const CREDITS: Credit[] = [
     name: '@pika_chuuves',
     url: 'https://x.com/pika_chuuves',
     note: 'Album scans',
+    verbatim: true,
   },
 ]
 
@@ -54,4 +63,10 @@ export const COLOPHON: Credit[] = [
     url: 'https://fonts.google.com/noto/specimen/Noto+Sans+KR',
   },
   { label: 'Built with', name: 'Vite · React · GSAP · Lenis' },
+  {
+    label: 'Built by',
+    name: 'danil-tzn31',
+    url: 'https://github.com/danil-tzn31',
+    verbatim: true,
+  },
 ]

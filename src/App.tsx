@@ -107,7 +107,7 @@ export default function App() {
 
         <Members />
 
-        <Credits inverted={inverted} onToggleInvert={toggle} />
+        <Credits />
       </main>
     </div>
   )

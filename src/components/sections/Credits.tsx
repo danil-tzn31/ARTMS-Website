@@ -2,27 +2,20 @@ import { useRef } from 'react'
 import { type Credit, CREDITS, COLOPHON } from '@/data/credits'
 import { SectionMarker } from '@/components/SectionMarker'
 import { Wordmark } from '@/components/chrome/Wordmark'
-import { InvertToggle } from '@/components/chrome/InvertToggle'
 import { useClock } from '@/lib/useClock'
 import { getLenis } from '@/lib/useLenis'
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
 
-interface CreditsProps {
-  inverted: boolean
-  onToggleInvert: () => void
-}
-
 function CreditRow({ credit }: { credit: Credit }) {
-  // Handles are written lowercase and read wrong in caps — the uppercase @ in
-  // Space Mono is easily mistaken for an 'a', so "@pika_chuuves" came out
-  // looking like "aPIKA_CHUUVES". A credit that misreads is a broken credit.
   const name = credit.url ? (
     <a
       href={credit.url}
       target="_blank"
       rel="noopener noreferrer"
       data-cursor="Open"
-      className="inline-flex items-baseline gap-1.5 normal-case underline decoration-1 underline-offset-4 transition-colors"
+      className={`inline-flex items-baseline gap-1.5 underline decoration-1 underline-offset-4 transition-colors ${
+        credit.verbatim ? 'normal-case' : ''
+      }`}
       style={{ textDecorationColor: 'var(--rule-strong)' }}
     >
       {credit.name}
@@ -61,7 +54,7 @@ function CreditRow({ credit }: { credit: Credit }) {
  * archive with no claim on any of it, which is why the disclaimer is set at
  * statement size rather than hidden in small print at the bottom.
  */
-export function Credits({ inverted, onToggleInvert }: CreditsProps) {
+export function Credits() {
   const root = useRef<HTMLElement>(null)
   const time = useClock()
   const year = new Date().getFullYear()
@@ -169,8 +162,8 @@ export function Credits({ inverted, onToggleInvert }: CreditsProps) {
           A fan-made archive, built for the love of it and for nothing else. All
           photography, artwork and video belong to Modhaus and to the scanners who
           shared them. Not affiliated with, endorsed by, or connected to Modhaus or
-          ARTMS. If you own something here and would rather it were not, say so and it
-          comes down.
+          ARTMS. If you own something here and would rather it were not, please reach
+          out to me so I could take it down.
         </p>
 
         {/* Colophon — the typefaces are borrowed work too. */}
@@ -187,7 +180,9 @@ export function Credits({ inverted, onToggleInvert }: CreditsProps) {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline decoration-1 underline-offset-4"
+                    className={`underline decoration-1 underline-offset-4 ${
+                      item.verbatim ? 'normal-case' : ''
+                    }`}
                     style={{ textDecorationColor: 'var(--rule)' }}
                   >
                     {item.name}
@@ -206,8 +201,6 @@ export function Credits({ inverted, onToggleInvert }: CreditsProps) {
           className="mt-[10vh] flex flex-wrap items-center gap-x-8 gap-y-4 pb-[8vh]"
           style={{ borderTop: '1px solid var(--rule)', paddingTop: '2rem' }}
         >
-          <InvertToggle inverted={inverted} onToggle={onToggleInvert} />
-
           <button
             type="button"
             onClick={toTop}
