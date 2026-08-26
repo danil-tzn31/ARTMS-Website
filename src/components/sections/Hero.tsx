@@ -184,14 +184,6 @@ export function Hero() {
             Three eras · Dall / Club Icarus / Hyper-Ego
           </p>
         </div>
-
-        <div
-          data-hero-fade
-          className="u-mono-sm u-over-media absolute bottom-0 right-0 flex items-center gap-2"
-        >
-          <span className="u-dim">Scroll</span>
-          <span className="block h-px w-8" style={{ background: 'var(--accent)' }} />
-        </div>
       </div>
     </section>
   )

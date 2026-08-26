@@ -160,10 +160,6 @@ export function Members() {
         ))}
       </ol>
 
-      <p data-members-head className="u-mono u-dim mt-6 px-[calc(var(--frame)+28px)]">
-        Select a name — full record, every era
-      </p>
-
       <MemberHoverPhoto member={selected ? null : hovered} />
       {/* No fallback UI: the chunk is prefetched on hover and on focus, so the
           gap between click and overlay is a frame, not a spinner. A spinner

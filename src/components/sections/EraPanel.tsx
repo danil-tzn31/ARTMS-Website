@@ -434,7 +434,6 @@ export function EraPanel({ era, index }: EraPanelProps) {
                       onMouseLeave={() => setActiveTrack(null)}
                       onFocus={() => setActiveTrack(i)}
                       onBlur={() => setActiveTrack(null)}
-                      aria-describedby={`era-${era.id}-tracklist-hint`}
                       className="flex w-full items-baseline gap-3 py-2.5 text-left"
                       data-cursor={era.photos.length > 1 ? 'Frame' : undefined}
                     >
@@ -470,13 +469,11 @@ export function EraPanel({ era, index }: EraPanelProps) {
                 )
               })}
             </ol>
-            <p
-              id={`era-${era.id}-tracklist-hint`}
-              className="u-mono-sm u-dim mt-4 pt-3"
+            <div
+              className="mt-4"
               style={{ borderTop: '1px solid var(--rule)' }}
-            >
-              Focus a track to isolate its frame
-            </p>
+              aria-hidden="true"
+            />
           </div>
         </div>
       </div>

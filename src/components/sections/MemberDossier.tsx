@@ -140,7 +140,14 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
       role="dialog"
       aria-modal="true"
       aria-labelledby="dossier-name"
-      className="fixed inset-0 z-[140] overflow-y-auto"
+      /* Lenis keeps intercepting wheel and touch even after stop(), so native
+         scrolling inside this overlay never fired — the panel was scrollable
+         (scrollHeight 1097 against an 844px viewport) and no gesture could
+         move it. data-lenis-prevent tells Lenis to ignore input originating in
+         this subtree. Without it the dossier is unreachable below the fold on
+         a phone. */
+      data-lenis-prevent
+      className="fixed inset-0 z-[140] overflow-y-auto overscroll-contain"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -161,15 +168,21 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
         className="absolute inset-0 cursor-default"
       />
 
+      {/* Three blocks: identity, photograph, details.
+       *
+       * On a phone they stack in DOM order, so the photograph is the second
+       * thing you reach. As a single left rail it sat below the whole
+       * definition list and nobody got to it without scrolling past the file.
+       * On desktop the grid puts identity and details in the left column and
+       * spans the photograph down the right. */}
       <motion.div
-        className="relative grid min-h-[100svh] grid-cols-12 gap-x-4 px-[calc(var(--frame)+28px)] py-[12vh]"
+        className="relative grid min-h-[100svh] grid-cols-12 gap-x-4 px-[calc(var(--frame)+28px)] py-[10vh] lg:grid-rows-[auto_1fr] lg:py-[12vh]"
         initial={reduce ? false : { y: 26 }}
         animate={{ y: 0 }}
         exit={reduce ? {} : { y: 18 }}
         transition={transition}
       >
-        {/* Left rail — who they are. */}
-        <div className="col-span-12 lg:col-span-4 lg:sticky lg:top-[12vh] lg:self-start">
+        <header className="col-span-12 lg:col-span-4 lg:row-start-1">
           <p className="u-mono-sm" style={{ color: member.color }}>
             Member file — {eraCount} of {ERAS.length} eras
           </p>
@@ -202,57 +215,9 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
           >
             {member.line}
           </p>
+        </header>
 
-          <dl className="u-mono mt-10 grid grid-cols-[9ch_1fr] gap-x-4 gap-y-3">
-            <dt className="u-dim">Name</dt>
-            <dd>
-              {member.fullName}{' '}
-              <span className="u-kr u-dim normal-case tracking-normal">
-                {member.fullNameHangul}
-              </span>
-            </dd>
-
-            <dt className="u-dim">Born</dt>
-            <dd className="tabular-nums">{formatDate(member.born)}</dd>
-
-            <dt className="u-dim">Animal</dt>
-            <dd className="flex items-center gap-2">
-              <AnimalMark animal={member.mark} size={24} />
-              {member.animal}
-            </dd>
-
-            <dt className="u-dim">Colour</dt>
-            <dd className="flex items-center gap-2">
-              <span
-                aria-hidden="true"
-                className="block size-3"
-                style={{ background: member.color }}
-              />
-              <span className="tabular-nums">{member.color}</span>
-            </dd>
-
-            <dt className="u-dim">Eras</dt>
-            <dd>
-              {ERAS.filter((e) => member.photos[e.id])
-                .map((e) => e.label)
-                .join(' · ')}
-            </dd>
-          </dl>
-
-          <button
-            type="button"
-            onClick={onClose}
-            data-cursor="Close"
-            className="u-mono mt-12 inline-flex items-center gap-2 px-3 py-2"
-            style={{ border: '1px solid var(--rule-strong)' }}
-          >
-            <span aria-hidden="true">✕</span> Close
-            <span className="u-mono-sm u-dim ml-2">Esc</span>
-          </button>
-        </div>
-
-        {/* Right column — what they looked like, era by era. */}
-        <div className="col-span-12 mt-[8vh] lg:col-span-7 lg:col-start-6 lg:mt-0">
+        <div className="col-span-12 mt-[6vh] lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:mt-0">
           <div
             role="tablist"
             aria-label="Era"
@@ -325,6 +290,54 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
               <span className="u-dim">{era.releaseType}</span>
             </p>
           </div>
+        </div>
+
+        <div className="col-span-12 mt-[8vh] lg:col-span-4 lg:col-start-1 lg:row-start-2 lg:mt-10">
+          <dl className="u-mono grid grid-cols-[9ch_1fr] gap-x-4 gap-y-3">
+            <dt className="u-dim">Name</dt>
+            <dd>
+              {member.fullName}{' '}
+              <span className="u-kr u-dim normal-case tracking-normal">
+                {member.fullNameHangul}
+              </span>
+            </dd>
+
+            <dt className="u-dim">Born</dt>
+            <dd className="tabular-nums">{formatDate(member.born)}</dd>
+
+            <dt className="u-dim">Animal</dt>
+            <dd className="flex items-center gap-2">
+              <AnimalMark animal={member.mark} size={24} />
+              {member.animal}
+            </dd>
+
+            <dt className="u-dim">Colour</dt>
+            <dd className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="block size-3"
+                style={{ background: member.color }}
+              />
+              <span className="tabular-nums">{member.color}</span>
+            </dd>
+
+            <dt className="u-dim">Eras</dt>
+            <dd>
+              {ERAS.filter((e) => member.photos[e.id])
+                .map((e) => e.label)
+                .join(' · ')}
+            </dd>
+          </dl>
+
+          <button
+            type="button"
+            onClick={onClose}
+            data-cursor="Close"
+            className="u-mono mt-10 inline-flex items-center gap-2 px-3 py-2"
+            style={{ border: '1px solid var(--rule-strong)' }}
+          >
+            <span aria-hidden="true">✕</span> Close
+          </button>
         </div>
       </motion.div>
     </motion.div>
