@@ -151,6 +151,31 @@
     }
   }
 
+  /* --- Transmission band ---------------------------------------------------- */
+
+  /* One 12px glyph, no blend mode, no layout effect — the cheapest possible
+     way to make the band read as live rather than printed. */
+  .fx-blink {
+    animation: fx-blink 1.6s steps(1, end) infinite;
+  }
+
+  @keyframes fx-blink {
+    0%,
+    62% {
+      opacity: 1;
+    }
+    63%,
+    100% {
+      opacity: 0.25;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fx-blink {
+      animation: none;
+    }
+  }
+
   /* --- Off-screen work ------------------------------------------------------- */
 
   /* The era panels are ~150vh each and the member index is another screenful.
