@@ -38,10 +38,16 @@ export function Wordmark({
           ? { width: '100%', aspectRatio: ASPECT }
           : { height, width: height * ASPECT }),
         background: 'currentColor',
+        // See AnimalMark: unprefixed masks are Safari 15.4+, and the failure
+        // mode is a solid bar rather than a missing wordmark.
         maskImage: `url(${import.meta.env.BASE_URL}brand/artms-wordmark.png)`,
         maskSize: 'contain',
         maskRepeat: 'no-repeat',
         maskPosition: 'center',
+        WebkitMaskImage: `url(${import.meta.env.BASE_URL}brand/artms-wordmark.png)`,
+        WebkitMaskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat',
+        WebkitMaskPosition: 'center',
       }}
     />
   )

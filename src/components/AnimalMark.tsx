@@ -51,10 +51,18 @@ export function AnimalMark({ animal, size = 26, className }: AnimalMarkProps) {
         height: size,
         flexShrink: 0,
         background: 'currentColor',
+        // Prefixed as well as plain. Safari only took the unprefixed mask
+        // properties from 15.4, and an ignored mask does not degrade to a
+        // missing mark: `background: currentColor` still paints, so the
+        // fallback is a solid rectangle where the animal should be.
         maskImage: `url(${import.meta.env.BASE_URL}brand/animals/${animal}.png)`,
         maskSize: 'contain',
         maskRepeat: 'no-repeat',
         maskPosition: 'center',
+        WebkitMaskImage: `url(${import.meta.env.BASE_URL}brand/animals/${animal}.png)`,
+        WebkitMaskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat',
+        WebkitMaskPosition: 'center',
       }}
     />
   )

@@ -104,6 +104,20 @@ src/
 - Git commands for this repo, with commit-message conventions:
   [`docs/GIT.md`](docs/GIT.md)
 
+## Deploy
+
+Static output, hosted on Vercel — `vercel.json` carries the build command and
+the cache policy. Two tiers, because only one of them is fingerprinted:
+
+- `/assets/*` is hashed by Vite and can never go stale, so it gets a year,
+  `immutable`.
+- `/media/*`, `/brand/*` and `/fonts/*` keep stable, meaningful filenames, so
+  they get a week with a month of `stale-while-revalidate` — fast on repeat
+  visits, but a rescanned photo is not stranded in caches for a year.
+
+`vercel.json` is validated against a strict schema on deploy; it rejects any
+key it does not know, comments included, so the reasoning lives here instead.
+
 ## Status
 
 | Phase | | |
