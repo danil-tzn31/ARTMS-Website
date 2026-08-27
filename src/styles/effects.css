@@ -248,7 +248,20 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .fx-band-overlap {
-      margin-top: -48vh;
+      /* svh, not vh, and that is the whole point: the hero is h-[100svh]. On
+         iOS Safari those are different lengths — vh resolves against the large
+         viewport (no URL bar) while the hero is laid out against the small one
+         — so a vh overlap rides up further than the hero is tall and the band
+         lands across the middle of the wordmark. It cannot reproduce in
+         Chromium, where the two units are equal. Simulated at iPhone 14 Pro
+         proportions (lvh 932 / svh 844): -48vh cuts the wordmark by 17px,
+         -48svh is clear.
+
+         No vh fallback: svh is Safari 15.4+, Chrome 108+, Firefox 101+, and
+         Lightning CSS strips a duplicate declaration it considers covered by
+         the build targets anyway — a fallback written here does not survive
+         into dist. */
+      margin-top: -48svh;
     }
   }
 
