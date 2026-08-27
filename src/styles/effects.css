@@ -176,19 +176,6 @@
     }
   }
 
-  /* --- Off-screen work ------------------------------------------------------- */
-
-  /* The era panels are ~150vh each and the member index is another screenful.
-   For most of a visit they are far off-screen, and rendering them costs layout
-   and paint on a page that is already asking a lot of the compositor.
-   `contain-intrinsic-size` supplies a placeholder height so skipping them does
-   not collapse the scrollbar — without it, ScrollTrigger's start/end positions
-   would be computed against the wrong document height. */
-  .perf-defer {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 150vh;
-  }
-
   /* --- Era photo cascade ----------------------------------------------------- */
 
   /* Widths are authored per photo for the desktop composition. At phone widths

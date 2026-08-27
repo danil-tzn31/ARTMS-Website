@@ -136,9 +136,9 @@ key it does not know, comments included, so the reasoning lives here instead.
 
 | | Target | Actual |
 |---|---|---|
-| JS, first load (gzip) | < 130 kB | **127 kB** — app 82.7 + GSAP 44.4 |
+| JS, first load (gzip) | < 130 kB | **127.2 kB** — app 82.8 + GSAP 44.4 |
 | Deferred (gzip) | — | 43.1 kB dossier + Framer Motion, fetched on hover |
-| CSS (gzip) | < 12 kB | **6.9 kB** |
+| CSS (gzip) | < 12 kB | **6.7 kB** |
 | LCP (local) | < 2.5 s | **0.50 s** |
 | CLS | < 0.1 | **0.0001** |
 | Horizontal scroll | none | none at 390 / 768 / 1024 / 1440 / 1920 |
