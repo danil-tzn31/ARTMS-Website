@@ -318,7 +318,8 @@ export function EraPanel({ era, index }: EraPanelProps) {
         >
           <h2
             id={`era-${era.id}-title`}
-            className="u-display fx-inkbleed w-max"
+            className="u-display fx-inkbleed fx-chroma w-max"
+            data-chroma
             style={
               {
                 '--wdth': 78,

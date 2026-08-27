@@ -18,8 +18,12 @@
  *    untouched, so the browser divides by the new, larger alpha on the way out
  *    and the glyphs render near-black. feFuncA sidesteps that entirely.
  *
- * The `baseFrequency` animation is deliberately slow and prime-ish (8.3s) so it
- * never visibly syncs with the scanline drift.
+ * The turbulence is static. It used to animate baseFrequency on an 8.3s loop so
+ * the texture breathed, and that loop invalidated the filter on every frame —
+ * for every element using it, at hero-wordmark size. Together with the scanline
+ * drift it held the desktop page at 11.7fps while sitting completely still.
+ * Neither alone explained it; removing both took idle to 48fps. A texture that
+ * breathes is not worth a page that never reaches 60.
  */
 export function Filters() {
   return (
@@ -43,14 +47,7 @@ export function Filters() {
             numOctaves="3"
             seed="7"
             result="noise"
-          >
-            <animate
-              attributeName="baseFrequency"
-              dur="8.3s"
-              values="0.013 0.052; 0.017 0.061; 0.013 0.052"
-              repeatCount="indefinite"
-            />
-          </feTurbulence>
+          />
           <feDisplacementMap
             in="SourceGraphic"
             in2="noise"

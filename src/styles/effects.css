@@ -26,17 +26,13 @@
       transparent 1px,
       transparent var(--scanline-pitch)
     );
-    /* Slight over-height so the drift never exposes an edge. */
-    height: calc(100% + var(--scanline-pitch) * 2);
-    animation: fx-drift 900ms linear infinite;
-    will-change: transform;
   }
 
-  @keyframes fx-drift {
-    to {
-      transform: translate3d(0, calc(var(--scanline-pitch) * -2), 0);
-    }
-  }
+  /* The scanlines do not drift. A full-viewport blended layer animating
+     transform forever was the most expensive thing on the page while it sat
+     still — 11.7fps idle at 1440x900, against 48fps with it stopped. At a 3px
+     pitch the drift was close to invisible anyway, and the CRT read comes from
+     the sweep below, which costs nothing because it carries no blend mode. */
 
   /* A second, much slower band that sweeps down the screen — this is the part
      that actually reads as a CRT rather than a texture. */
@@ -120,7 +116,6 @@
      the scroll budget, and the drift is barely visible at phone size — the
      static scanlines still read as a CRT. */
   @media (pointer: coarse), (prefers-reduced-motion: reduce) {
-    .fx-scanlines,
     .fx-sweep {
       animation: none;
     }
@@ -151,6 +146,19 @@
     }
   }
 
+  /* And while the page is moving. Measured at 1440x900 unthrottled, scrolling
+     through the era section: 8.6fps with the filter, 22.1fps without. Removing
+     the SMIL animation changed nothing (8.8fps) — the cost is running
+     turbulence, displacement, blur and a transfer over viewport-spanning type
+     on every frame it moves, not the noise animating.
+
+     So the texture is for when the page is still, which is when it can
+     actually be seen. In motion the chromatic split takes its place. */
+  html[data-scrolling] .fx-inkbleed,
+  html[data-scrolling] .fx-inkbleed-soft {
+    filter: none;
+  }
+
   /* --- Transmission band ---------------------------------------------------- */
 
   /* One 12px glyph, no blend mode, no layout effect — the cheapest possible
@@ -174,6 +182,53 @@
     .fx-blink {
       animation: none;
     }
+  }
+
+  /* --- Chromatic aberration ------------------------------------------------- */
+
+  /* An R/B split that opens up only while the page is moving fast and closes to
+     nothing at rest. --velocity is written onto [data-chroma] elements by
+     useScrollVelocity.
+
+     Declared only while moving: a text-shadow with zero offsets still paints
+     two extra copies of the glyphs, so leaving it on at rest would charge for
+     an effect that renders nothing. Deliberately small — at 1.2px it reads as a
+     mis-registered print rather than as an effect, which is the point. */
+  html[data-scrolling] .fx-chroma {
+    text-shadow:
+      calc(var(--velocity) * -1.2px) 0 0 color-mix(in srgb, var(--accent) 62%, red),
+      calc(var(--velocity) * 1.2px) 0 0 color-mix(in srgb, var(--accent) 62%, cyan);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fx-chroma {
+      text-shadow: none;
+    }
+  }
+
+  /* --- Blended overlays while moving ---------------------------------------- */
+
+  /* The scanline and grain layers are full-viewport, fixed, and blended. A
+     blend mode forces the compositor to re-blend everything beneath them on
+     every frame they or the page move, and it is the single most expensive
+     thing on the page at desktop size — measured at 1440x900 unthrottled in
+     the era section: 21.7fps blended, 41.7fps not.
+
+     They keep the blend at rest, where the interaction with the artwork
+     underneath is the whole point, and drop to plain alpha while moving. The
+     opacities are compensated so the swap does not pop: overlay on a dark
+     ground reads lighter than normal does, so both layers step down. */
+  html[data-scrolling] .fx-scanlines,
+  html[data-scrolling] .fx-grain {
+    mix-blend-mode: normal;
+  }
+
+  html[data-scrolling] .fx-scanlines {
+    opacity: calc(var(--scanline-opacity) * 0.55);
+  }
+
+  html[data-scrolling] .fx-grain {
+    opacity: calc(var(--grain-opacity) * 0.6);
   }
 
   /* --- Hero handoff --------------------------------------------------------- */

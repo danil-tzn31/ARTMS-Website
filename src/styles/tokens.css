@@ -10,6 +10,15 @@
 /* Registered so the browser treats it as a number rather than a token string.
    Without this, animating the width axis through a custom property silently
    resolves to 0 the first time it is read. */
+/* Scroll velocity, published by useScrollVelocity onto [data-chroma] elements
+   and read by .fx-chroma. Registered so it resolves as a number rather than as
+   an unsubstituted token inside calc(). */
+@property --velocity {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
 @property --wdth {
   syntax: '<number>';
   inherits: false;
