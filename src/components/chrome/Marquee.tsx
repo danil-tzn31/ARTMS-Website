@@ -18,6 +18,7 @@ export function Marquee({ items, speed = 28, className = '' }: MarqueeProps) {
   const root = useRef<HTMLDivElement>(null)
   const track = useRef<HTMLDivElement>(null)
   const direction = useRef(1)
+  const applied = useRef(1)
 
   useGSAP(
     () => {
@@ -43,8 +44,15 @@ export function Marquee({ items, speed = 28, className = '' }: MarqueeProps) {
             direction.current = dir
             gsap.to(tween, { timeScale: dir, duration: 0.35, overwrite: true })
           }
+          // ScrollTrigger fires this on every scroll frame. Tweening the
+          // timeScale from here allocated — and immediately overwrote — a tween
+          // per frame; the visible difference between 2.10x and 2.14x is nil,
+          // so only retarget once the speed has actually moved.
           const boost = 1 + Math.min(Math.abs(self.getVelocity()) / 900, 4)
-          gsap.to(tween, { timeScale: dir * boost, duration: 0.4, overwrite: true })
+          const next = dir * boost
+          if (Math.abs(next - applied.current) < 0.25) return
+          applied.current = next
+          gsap.to(tween, { timeScale: next, duration: 0.4, overwrite: true })
         },
       })
 

@@ -16,13 +16,6 @@
   initial-value: 100;
 }
 
-/* Scroll velocity, published by useScrollVelocity and read by .fx-chroma. */
-@property --velocity {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 0;
-}
-
 @theme {
   --font-display:
     'Archivo Variable', 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;

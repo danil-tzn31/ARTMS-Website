@@ -12,7 +12,7 @@ import { Hero } from '@/components/sections/Hero'
 import { Eras } from '@/components/sections/Eras'
 import { Members } from '@/components/sections/Members'
 import { Credits } from '@/components/sections/Credits'
-import { useLenis, useScrollVelocity } from '@/lib/useLenis'
+import { useLenis } from '@/lib/useLenis'
 import { useInvert } from '@/lib/useInvert'
 import { useEraTheme } from '@/lib/useEraTheme'
 import { useClock } from '@/lib/useClock'
@@ -43,7 +43,6 @@ export default function App() {
   const onBooted = useCallback(() => setBooted(true), [])
 
   useLenis()
-  useScrollVelocity()
   useEraTheme(scope)
 
   return (

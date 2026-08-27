@@ -114,7 +114,12 @@
     transition: filter 220ms var(--ease-out-expo);
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  /* Both overlays animate transform forever underneath a blend mode, so the
+     compositor re-blends the full viewport every frame for the whole visit.
+     Measured at 6x CPU throttle on a 390x844 @3x viewport, that is ~10fps of
+     the scroll budget, and the drift is barely visible at phone size — the
+     static scanlines still read as a CRT. */
+  @media (pointer: coarse), (prefers-reduced-motion: reduce) {
     .fx-scanlines,
     .fx-sweep {
       animation: none;
@@ -138,26 +143,11 @@
     will-change: filter;
   }
 
-  @media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  @media (max-width: 767px), (pointer: coarse), (prefers-reduced-motion: reduce) {
     .fx-inkbleed,
     .fx-inkbleed-soft {
       filter: none;
       will-change: auto;
-    }
-  }
-
-  /* --- Chromatic aberration on fast scroll ---------------------------------- */
-
-  /* --velocity is written by the Lenis listener (0 at rest, ~1 at speed). */
-  .fx-chroma {
-    text-shadow:
-      calc(var(--velocity, 0) * -1.6px) 0 0 color-mix(in srgb, var(--accent) 70%, red),
-      calc(var(--velocity, 0) * 1.6px) 0 0 color-mix(in srgb, var(--accent) 70%, cyan);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .fx-chroma {
-      text-shadow: none;
     }
   }
 

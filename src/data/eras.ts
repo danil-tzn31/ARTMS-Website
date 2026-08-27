@@ -98,7 +98,7 @@ export const ERAS: Era[] = [
     releaseType: '2nd Mini Album',
     released: '2026-08-07',
     titleTrack: 'Blue Blood',
-    statement: ['Under you pixel light,', 'I lose myself again'],
+    statement: ['Under your pixel light,', 'I lose myself again'],
     tracks: [
       { no: 1, title: 'From Wings To Soul' },
       { no: 2, title: 'BORN STUNNER', isPreRelease: true },

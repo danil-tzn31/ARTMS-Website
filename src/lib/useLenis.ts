@@ -46,30 +46,3 @@ export function useLenis() {
     }
   }, [])
 }
-
-/**
- * Publishes normalised scroll velocity (0 → 1) as `--velocity` on the root so
- * CSS can react to scroll speed without React re-rendering on every frame.
- */
-export function useScrollVelocity() {
-  useEffect(() => {
-    const root = document.documentElement
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    let raf = 0
-    let current = 0
-
-    const tick = () => {
-      const target = Math.min(Math.abs(instance?.velocity ?? 0) / 45, 1)
-      current += (target - current) * 0.12
-      root.style.setProperty('--velocity', current.toFixed(3))
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-
-    return () => {
-      cancelAnimationFrame(raf)
-      root.style.removeProperty('--velocity')
-    }
-  }, [])
-}
