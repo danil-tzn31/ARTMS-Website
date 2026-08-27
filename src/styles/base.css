@@ -86,6 +86,26 @@
   }
 }
 
+@layer base {
+  /* Everything after the hero paints its own opaque ground.
+
+     The hero does not end where it looks like it ends: ScrollTrigger's
+     pin-spacer keeps the section in flow for a full viewport past the pin, so
+     #eras (document 1360.391 on a 900px window) overlaps a hero that is still
+     there and still holding a playing video, by 350px. These sections were
+     transparent, which made that overlap load-bearing on the scrim alone —
+     and the section boundary lands on a fractional pixel, where a device row
+     can end up split between two layers.
+
+     Painting the ground here means no rounding case anywhere in that overlap
+     can expose the footage. Visually identical: --bg is what was showing
+     through already. */
+  main > section,
+  main > footer {
+    background: var(--bg);
+  }
+}
+
 @layer components {
   /* ---------------------------------------------------------------------------
      Type primitives
