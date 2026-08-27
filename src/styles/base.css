@@ -201,6 +201,19 @@
     border: 0;
   }
 
+  /* The skip link parks well clear of the viewport rather than just above it.
+
+     translateY(-120%) left it 8.5px above the top edge, which is fine
+     everywhere the layout viewport and the visual viewport are the same thing.
+     On iOS Safari they are not: the visual viewport shifts as the URL bar
+     collapses and during overscroll bounce, and a fixed element sitting eight
+     pixels up peeks into frame when it does. Reported as a Skip To Content
+     button turning up on a phone at random.
+
+     clip-path does the guaranteeing, the offset keeps the slide looking like a
+     slide, and neither affects focusability — which rules out the obvious
+     alternative: visibility: hidden would hide it just as well and take it out
+     of the tab order, which is the entire feature. */
   .u-skip-link {
     position: fixed;
     top: 0;
@@ -209,12 +222,22 @@
     padding: 10px 16px;
     background: var(--accent);
     color: var(--bg);
-    transform: translateY(-120%);
-    transition: transform 160ms var(--ease-out-expo);
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(calc(-100% - 160px));
+    /* clip-path is not animated, it is switched — instantly on the way in so
+       the slide is visible, and only after the slide-out has finished on the
+       way back, so it does not vanish mid-travel. */
+    transition:
+      transform 160ms var(--ease-out-expo),
+      clip-path 0s linear 160ms;
   }
 
   .u-skip-link:focus-visible {
+    clip-path: none;
     transform: translateY(0);
+    transition:
+      transform 160ms var(--ease-out-expo),
+      clip-path 0s;
   }
 }
 
