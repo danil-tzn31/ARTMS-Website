@@ -100,7 +100,7 @@ export default function App() {
 
       <main>
         <Hero />
-        <Marquee items={TICKER} />
+        <Marquee items={TICKER} className="fx-band-overlap" />
 
         <Eras />
 

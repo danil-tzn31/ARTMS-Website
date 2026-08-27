@@ -176,6 +176,27 @@
     }
   }
 
+  /* --- Hero handoff --------------------------------------------------------- */
+
+  /* By the end of the hero's pin the wordmark has docked near the top and the
+     scrim has closed, which leaves roughly three quarters of a viewport of
+     solid --bg underneath it. Measured at 1440x900: 346px of empty screen
+     above the transmission band. The band rides up into that dead space
+     instead, which cuts it to 52px and brings the first era panel with it.
+
+     Only when motion is allowed. Under prefers-reduced-motion the hero never
+     pins and never scrims, so the wordmark stays centred in a full-height
+     section — and an overlap would drop the band straight on top of it. */
+  .fx-band-overlap {
+    margin-top: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .fx-band-overlap {
+      margin-top: -48vh;
+    }
+  }
+
   /* --- Era photo cascade ----------------------------------------------------- */
 
   /* Widths are authored per photo for the desktop composition. At phone widths
