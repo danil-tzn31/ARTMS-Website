@@ -112,10 +112,20 @@ export function Hero() {
             'linear-gradient(to bottom, rgb(4 3 8 / 0.62) 0%, rgb(4 3 8 / 0.04) 30%, rgb(4 3 8 / 0.08) 64%, rgb(4 3 8 / 0.74) 100%)',
         }}
       />
+      {/* Deliberately -inset-px, not inset-0. This scrim is the only thing
+          covering the video once the hero hands off, and the hero keeps
+          scrolling behind the era panels for a full viewport after its pin
+          releases — the pin-spacer leaves it there. Sized to the box exactly,
+          any sub-pixel rounding between the scrim's edge and the section's
+          overflow clip leaves a one-device-pixel row of video showing through
+          the middle of the era content, which reads as a hairline seam. The
+          hero sits at a fractional offset (810.001px, from anticipatePin), so
+          that rounding is not hypothetical. Overhanging by 1px costs nothing:
+          the section clips it. */}
       <div
         data-hero-scrim
         aria-hidden="true"
-        className="absolute inset-0 opacity-0"
+        className="absolute -inset-px opacity-0"
         style={{ background: 'var(--bg)' }}
       />
 
