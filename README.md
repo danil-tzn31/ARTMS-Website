@@ -99,10 +99,16 @@ src/
 └─ styles/          tokens, base, effects
 ```
 
-- Art direction, layout rules and section choreography:
-  [`docs/ART-DIRECTION.md`](docs/ART-DIRECTION.md)
-- Git commands for this repo, with commit-message conventions:
-  [`docs/GIT.md`](docs/GIT.md)
+Art direction, layout rules and section choreography:
+[`docs/ART-DIRECTION.md`](docs/ART-DIRECTION.md)
+
+### Things worth knowing before you commit
+
+- `_scrap/` is gitignored scratch. Safe to delete at any point.
+- `public/media/` and `public/brand/` **are** committed on purpose — they are
+  the optimised derivatives that ship. The multi-gigabyte originals stay
+  outside the repo, in `artms media resources`.
+- `npm run typecheck && npm run lint && npm run build` before pushing.
 
 ## Deploy
 

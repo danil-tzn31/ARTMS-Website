@@ -97,7 +97,9 @@ near-black  violet-black     toxic black       off-white
 
 **Why this matters:** the page inverts *itself* by the third era. The manual
 invert toggle therefore reads as a theme the site already believes in, rather
-than a novelty button bolted on because the reference site had one.
+than a novelty button bolted on because the reference site had one. It lives on
+the top frame rule only — a second copy in the footer made the colophon read as
+a settings tray.
 
 ---
 
@@ -105,7 +107,7 @@ than a novelty button bolted on because the reference site had one.
 
 | Role | Family | Notes |
 |---|---|---|
-| Display | **Archivo** (variable, wdth 62–125, wght 100–900) | The width axis is animated — headlines compress and expand on scroll |
+| Display | **Archivo** (variable, wdth 62–125, wght 100–900) | Width axis set per role and held there — the hero sits at 78, the preloader at 74. It was animated on scroll and that was wrong: the mark read as stretched until you moved, and the inverted mode exposed the scrub. |
 | Micro / UI | **Space Mono** 400/700 | All labels, metadata, tracklists, nav |
 | Angelcore accent | **Instrument Serif** italic | Sparingly — era subtitles, member hangul romanisation |
 | Korean | **Noto Sans KR**, subset to 23 glyphs | Hangul only — `npm run fonts` builds a 2.5 kB file instead of the 539 kB published slice |
@@ -214,8 +216,8 @@ stacked, each with animal glyph + colour swatch + era ticks as mono metadata.
 
 ### N°004 — FOOTER
 Giant `ARTMS` wordmark scanline-warped across the full width (`pxpush` move).
-Credits grid for media owners and scanners. Invert toggle, back-to-top, KST
-timestamp, `© 2026 — FAN PROJECT · NOT AFFILIATED WITH MODHAUS`.
+Credits grid for media owners and scanners, back-to-top, KST timestamp,
+`© 2026 — FAN PROJECT · NOT AFFILIATED WITH MODHAUS`.
 
 ---
 
@@ -223,19 +225,19 @@ timestamp, `© 2026 — FAN PROJECT · NOT AFFILIATED WITH MODHAUS`.
 
 | Effect | Implementation |
 |---|---|
-| Scanlines | Fixed `repeating-linear-gradient`, 3 px pitch, `mix-blend-mode: overlay`, slow vertical drift + rare flicker keyframe |
+| Scanlines | Fixed `repeating-linear-gradient`, 3 px pitch, `mix-blend-mode: overlay` at rest. Static — the drift animated a blended full-viewport layer forever and held the page at 11.7 fps while it sat still. The CRT read comes from the sweep, which carries no blend mode and costs nothing. |
 | Grain | Fixed SVG `feTurbulence` layer, `overlay`, 0.08 opacity |
 | Invert mode | `filter: invert(1) hue-rotate(180deg)` on `html` — **never on a wrapper div**, which would make it a containing block for every fixed descendant and break the frame, the scanlines and ScrollTrigger's pin. Media inverts too, deliberately. Persisted per visitor, restored before first paint by an inline script |
 | Cursor | Mono crosshair with contextual label (`VIEW` / `DRAG` / `CLOSE`). Hidden on touch |
-| Chromatic aberration | ±1 px R/B offset on display type during fast scroll only, driven by Lenis velocity |
+| Chromatic aberration | ±1.2 px R/B offset on the era titles while scrolling, driven by Lenis velocity. Declared only while the page is moving — a zero-offset shadow still paints two extra copies of every glyph. |
 
 ---
 
 ## 8. Non-negotiables
 
 - **`prefers-reduced-motion`**: all scrubbed timelines resolve to their end
-  state, scanline drift and flicker stop, marquees hold still. The site stays
-  fully legible and complete.
+  state, the CRT sweep and the marquee hold still, the chromatic split never
+  renders. The site stays fully legible and complete.
 - **Keyboard**: member rows are real `<button>`s; the dossier traps focus and
   restores it on close.
 - **Images**: `sharp` emits AVIF + WebP at 640 / 1280 / 1920 with a base64
@@ -249,13 +251,3 @@ timestamp, `© 2026 — FAN PROJECT · NOT AFFILIATED WITH MODHAUS`.
 - **No dead placeholder content.** Every string on the page is real.
 
 ---
-
-## 9. Build phases (one commit each)
-
-1. Scaffold + tooling + design tokens + asset pipeline
-2. Shell: edge frame, navbar, scanlines, grain, invert, Lenis/GSAP wiring
-3. Hero
-4. Eras
-5. Members + dossier overlay
-6. Footer + credits
-7. Polish: reduced-motion, a11y pass, perf budget, deploy config
