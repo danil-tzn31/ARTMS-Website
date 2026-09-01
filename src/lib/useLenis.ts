@@ -3,6 +3,7 @@ import Lenis from 'lenis'
 import { gsap, ScrollTrigger } from './gsap'
 
 let instance: Lenis | null = null
+let tick: ((time: number) => void) | null = null
 
 /** Read-only handle for components that need to stop/start or scroll to. */
 export function getLenis() {
@@ -34,12 +35,14 @@ export function useLenis() {
     lenis.on('scroll', onScroll)
 
     const raf = (time: number) => lenis.raf(time * 1000)
+    tick = raf
     gsap.ticker.add(raf)
     gsap.ticker.lagSmoothing(0)
 
     return () => {
       lenis.off('scroll', onScroll)
       gsap.ticker.remove(raf)
+      tick = null
       gsap.ticker.lagSmoothing(500, 33)
       lenis.destroy()
       instance = null
@@ -124,4 +127,31 @@ export function useScrollVelocity() {
       for (const el of targets) el.style.removeProperty('--velocity')
     }
   }, [])
+}
+
+/**
+ * Freeze the scroll engine while a full-screen overlay owns the viewport.
+ *
+ * `lenis.stop()` stops it scrolling, not running. Lenis is driven by the GSAP
+ * ticker, so with the dossier open it still ticked every frame, still read
+ * window.scrollY through its actualScroll getter, and still drove every
+ * ScrollTrigger — against a document that is overflow-hidden and cannot move.
+ *
+ * gsap.ticker.sleep() does not do it: any live tween wakes the ticker straight
+ * back up, and the marquee's is `repeat: -1`, so it never stops asking. The
+ * ticker callback has to come off and the global timeline has to be paused —
+ * which also stops the marquee animating underneath an overlay nobody can see
+ * it through.
+ *
+ * Safe to freeze because the scroll position cannot change while the overlay
+ * holds it, so there is nothing to resynchronise on the way back.
+ */
+export function freezeScrollEngine() {
+  if (tick) gsap.ticker.remove(tick)
+  gsap.globalTimeline.pause()
+}
+
+export function thawScrollEngine() {
+  gsap.globalTimeline.resume()
+  if (tick) gsap.ticker.add(tick)
 }
