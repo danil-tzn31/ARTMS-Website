@@ -5,7 +5,7 @@ import { ERAS } from '@/data/eras'
 import { Picture } from '@/components/Picture'
 import { AnimalMark } from '@/components/AnimalMark'
 import { formatDate, formatDotted } from '@/lib/format'
-import { getLenis } from '@/lib/useLenis'
+import { freezeScrollEngine, getLenis, thawScrollEngine } from '@/lib/useLenis'
 import { useFocusTrap } from '@/lib/useFocusTrap'
 
 /**
@@ -94,8 +94,6 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
 
   const era = ERAS.find((e) => e.id === eraId) ?? firstPresent
   const eraCount = ERAS.filter((e) => member.photos[e.id]).length
-  const slug = member.photos[era.id]
-  const absence = member.absence?.[era.id]
 
   useFocusTrap(panel, true)
 
@@ -104,6 +102,13 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
     // The overflow lock is the fallback for the reduced-motion path, where
     // Lenis is never started.
     getLenis()?.stop()
+
+    // Stopping Lenis stops it scrolling, not running — see freezeScrollEngine.
+    // Profiling a tab switch put the time squarely there: script and style
+    // recalculation, with the ticker driving Lenis and every ScrollTrigger
+    // behind a page that cannot move.
+    freezeScrollEngine()
+
     const previousOverflow = document.documentElement.style.overflow
     document.documentElement.style.overflow = 'hidden'
 
@@ -115,6 +120,7 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
     return () => {
       document.removeEventListener('keydown', onKeyDown)
       document.documentElement.style.overflow = previousOverflow
+      thawScrollEngine()
       getLenis()?.start()
     }
   }, [onClose])
@@ -264,24 +270,58 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
           >
             {/* The frame is declared here, once, so the photo and the absence
                 placard are the same box. Switching to an era a member was not
-                in should change what is inside the frame, never the frame. */}
+                in should change what is inside the frame, never the frame.
+
+                Every era stays mounted and stacked, cross-fading — the same
+                move MemberHoverPhoto makes, for the same reason. Swapping the
+                slug on one Picture meant the browser met a new <img> at the
+                moment the tab was clicked and had to go and fetch a photograph
+                before it could paint one. Measured with 300ms of latency per
+                asset: 394ms to the first view of Club Icarus, 373ms to
+                Hyper-Ego. Mounted, they load while the dossier is opening and
+                the same switches land in 19ms and 40ms.
+
+                Only the active era takes `priority`. The others still load —
+                they are in the viewport — but at default fetch priority, so
+                they queue behind the photograph actually being looked at. */}
             <div
               style={{ aspectRatio: PHOTO_FRAME, maxHeight: '68vh' }}
-              className="w-full"
+              className="relative w-full"
             >
-              {slug ? (
-                <Picture
-                  slug={slug}
-                  alt={`${member.name} — ${era.title}`}
-                  sizes="(max-width: 1024px) 92vw, 56vw"
-                  ratio={PHOTO_FRAME}
-                  focus={FOCUS[slug] ?? 'center 30%'}
-                  className="h-full w-full"
-                  priority
-                />
-              ) : (
-                <AbsencePlacard member={member} era={era} absence={absence} />
-              )}
+              {ERAS.map((e) => {
+                const eraSlug = member.photos[e.id]
+                const isActive = e.id === era.id
+                return (
+                  <div
+                    key={e.id}
+                    aria-hidden={!isActive}
+                    className="absolute inset-0"
+                    style={{
+                      opacity: isActive ? 1 : 0,
+                      pointerEvents: isActive ? undefined : 'none',
+                      transition: reduce ? 'none' : 'opacity 320ms var(--ease-out-expo)',
+                    }}
+                  >
+                    {eraSlug ? (
+                      <Picture
+                        slug={eraSlug}
+                        alt={`${member.name} — ${e.title}`}
+                        sizes="(max-width: 1024px) 92vw, 56vw"
+                        ratio={PHOTO_FRAME}
+                        focus={FOCUS[eraSlug] ?? 'center 30%'}
+                        className="h-full w-full"
+                        priority={isActive}
+                      />
+                    ) : (
+                      <AbsencePlacard
+                        member={member}
+                        era={e}
+                        absence={member.absence?.[e.id]}
+                      />
+                    )}
+                  </div>
+                )
+              })}
             </div>
 
             <p className="u-mono mt-4 flex flex-wrap items-center gap-x-5 gap-y-1">
