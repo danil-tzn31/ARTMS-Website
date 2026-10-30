@@ -11,6 +11,30 @@
 @import './styles/base.css';
 @import './styles/effects.css';
 
+/* Two faces carried by a single era each, for the one word that names it.
+
+   Both are cut to the exact glyphs they draw and nothing else — CLUB ICARUS is
+   eight letters, HYPER-EGO is seven and a hyphen — which is why 107 kB and
+   135 kB become 3.4 kB and 6.7 kB. The same trade the Korean subset makes:
+   if either era is ever retitled, or either name is added to the marquee in a
+   different spelling, the missing glyphs will fall back to Archivo rather than
+   render. Recut them from the originals in `artms media resources` if so. */
+@font-face {
+  font-family: 'Ancial';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ancial-subset.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Aboensis';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/aboensis-subset.woff2') format('woff2');
+}
+
 /* The italic accent face. Subset to Latin plus punctuation — 19 kB against the
    81 kB the foundry ships, because it is only ever used for six short lines.
    Declared here rather than imported from a package because it is a licensed
