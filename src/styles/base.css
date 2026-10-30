@@ -165,6 +165,26 @@
     text-transform: none;
   }
 
+  /* An era wearing its own face. Both are static OTFs, so everything Archivo
+     was being asked for has to be unwound: weight 800 would be synthesised by
+     smearing the outlines, font-stretch and the variation settings have no
+     axes to act on, and -0.025em was tracking tuned to a grotesque, not to
+     these. */
+  .u-face {
+    font-weight: 400;
+    font-stretch: normal;
+    font-variation-settings: normal;
+    letter-spacing: 0;
+  }
+
+  .u-face-icarus {
+    font-family: var(--font-icarus);
+  }
+
+  .u-face-ego {
+    font-family: var(--font-ego);
+  }
+
   .u-kr {
     font-family: var(--font-kr);
     font-weight: 500;

@@ -25,6 +25,14 @@ interface MarqueeProps {
  *    of type — the alternation is what gives the band rhythm as it moves, and
  *    it is doing the work the old grey mono row could not do at 12px.
  */
+/* The two eras that carry their own face carry it here too, so the band names
+   them the way their panel does. Keyed on the string because the ticker is a
+   flat list of words — if either is reworded in App.tsx, update this with it. */
+const ITEM_FACE: Record<string, string> = {
+  'Club Icarus': 'u-face u-face-icarus',
+  'Hyper-Ego': 'u-face u-face-ego',
+}
+
 export function Marquee({ items, speed = 28, className = '' }: MarqueeProps) {
   const root = useRef<HTMLDivElement>(null)
   const track = useRef<HTMLDivElement>(null)
@@ -95,12 +103,15 @@ export function Marquee({ items, speed = 28, className = '' }: MarqueeProps) {
           {content.map((item, i) => (
             <span
               key={i}
-              className="u-display flex items-center whitespace-nowrap uppercase"
+              className={`u-display flex items-center whitespace-nowrap uppercase ${ITEM_FACE[item] ?? ''}`}
               style={{
                 fontSize: 'clamp(1.6rem, 4.4vw, 3.75rem)',
                 lineHeight: 0.94,
-                letterSpacing: '-0.02em',
-                fontWeight: 700,
+                // Both inline, so both have to stand down for a face that ships
+                // one static weight — 700 here would be a synthesised bold.
+                ...(ITEM_FACE[item]
+                  ? { fontWeight: 400 }
+                  : { letterSpacing: '-0.02em', fontWeight: 700 }),
                 // Outlined words are drawn with a stroke and no fill. Under the
                 // invert toggle both states invert together, because the stroke
                 // reads currentColor's token rather than a baked colour.

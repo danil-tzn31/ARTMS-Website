@@ -97,10 +97,21 @@ const TITLE_LINES: Record<Era['id'], string[]> = {
  * Re-measure with a Range over the line and divide by (fontSize × characters)
  * if the words or the face ever change.
  */
+/* Average advance per character of the longest line, in em, measured in the
+   browser at the face and tracking the title actually renders with. It is what
+   makes every title span the panel, so it is per-face, not per-era: swapping
+   Club Icarus to Ancial and Hyper-Ego to Aboensis moved both. Ancial sets
+   narrower than Archivo and Aboensis considerably wider. */
 const TITLE_ADVANCE: Record<Era['id'], number> = {
-  dall: 0.526, // 'Dall'
-  icarus: 0.518, // 'Icarus'
-  ego: 0.562, // 'Hyper'
+  dall: 0.526, // 'Dall' — Archivo, wdth 78 / wght 800
+  icarus: 0.486, // 'Icarus' — Ancial, was 0.518 on Archivo
+  ego: 0.652, // 'Hyper' — Aboensis, was 0.562 on Archivo
+}
+
+/* Only these two eras wear their own face. Dall stays on the display family. */
+const TITLE_FACE: Partial<Record<Era['id'], string>> = {
+  icarus: 'u-face u-face-icarus',
+  ego: 'u-face u-face-ego',
 }
 
 /** Longest line spans the full viewport, flush to one edge, overflowing neither. */
@@ -318,14 +329,21 @@ export function EraPanel({ era, index }: EraPanelProps) {
         >
           <h2
             id={`era-${era.id}-title`}
-            className="u-display fx-inkbleed fx-chroma w-max"
+            className={`u-display fx-inkbleed fx-chroma w-max ${TITLE_FACE[era.id] ?? ''}`}
             data-chroma
             style={
               {
-                '--wdth': 78,
                 fontSize: titleSize(era, lines),
-                fontVariationSettings: '"wdth" var(--wdth), "wght" 800',
-                fontStretch: 'normal',
+                // Archivo's axes, and only for the eras still set in Archivo —
+                // written inline, these would otherwise beat the .u-face class
+                // and ask a static font for a width axis it does not have.
+                ...(TITLE_FACE[era.id]
+                  ? {}
+                  : {
+                      '--wdth': 78,
+                      fontVariationSettings: '"wdth" var(--wdth), "wght" 800',
+                      fontStretch: 'normal',
+                    }),
               } as React.CSSProperties
             }
           >
