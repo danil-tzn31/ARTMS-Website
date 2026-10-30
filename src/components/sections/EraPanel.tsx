@@ -85,27 +85,39 @@ const TITLE_LINES: Record<Era['id'], string[]> = {
 }
 
 /**
- * Average advance per uppercase glyph, in em, MEASURED off the rendered face
- * at wdth 78 / wght 800 — not estimated.
+ * How wide the longest line actually DRAWS, in em — ink, not advance —
+ * measured in the browser with canvas ink extents at the face and tracking the
+ * title renders with.
  *
- * A single average does not work here. Archivo's advances vary enough between
- * words that one constant made "Icarus" 91% of the viewport and "Hyper" 99%;
- * with a shift on top, the narrow I fell off the left edge entirely and the era
- * read as CARUS. Clipping a letterform is the effect. Deleting a letter is a
- * typo, and these names appear exactly once each.
+ * The distinction only started to matter when the brush faces arrived. For a
+ * grotesque the two numbers agree to a rounding error, so sizing off advances
+ * was fine while all three titles were Archivo. Aboensis draws 3.54em across a
+ * 3.26em advance and begins a quarter of an em to the left of its own origin,
+ * which is how "Hyper" measured a perfect 100% span in its layout box and still
+ * ran off both edges of the screen. The box is not where the paint is.
  *
- * Re-measure with a Range over the line and divide by (fontSize × characters)
- * if the words or the face ever change.
+ * Re-measure with ctx.measureText() at a known size if a name or a face moves.
  */
-/* Average advance per character of the longest line, in em, measured in the
-   browser at the face and tracking the title actually renders with. It is what
-   makes every title span the panel, so it is per-face, not per-era: swapping
-   Club Icarus to Ancial and Hyper-Ego to Aboensis moved both. Ancial sets
-   narrower than Archivo and Aboensis considerably wider. */
-const TITLE_ADVANCE: Record<Era['id'], number> = {
-  dall: 0.526, // 'Dall' — Archivo, wdth 78 / wght 800
-  icarus: 0.486, // 'Icarus' — Ancial, was 0.518 on Archivo
-  ego: 0.652, // 'Hyper' — Aboensis, was 0.562 on Archivo
+const TITLE_INK: Record<Era['id'], number> = {
+  dall: 2.105, // 'Dall' — Archivo, wdth 78 / wght 800
+  icarus: 2.92, // 'Icarus' — Ancial
+  ego: 3.538, // 'Hyper' — Aboensis
+}
+
+/* How far the glyphs reach outside their own advance box. Padding the heading
+   by this makes its border box equal to the ink, which is what w-max and the
+   flush-edge alignment both assume — and it keeps working if the panel order
+   ever flips and the title goes flush right instead. */
+const TITLE_OVERHANG: Partial<Record<Era['id'], { start: number; end: number }>> = {
+  ego: { start: 0.234, end: 0.045 },
+}
+
+/* Leading, for the faces where 0.82 off .u-display would drop one line onto the
+   next. "Hyper" trails 0.578em below its baseline and "Ego" stands 0.594em
+   above the one after it, so anything under 1.172 collides; the rest is air.
+   Ancial clears 0.82 on its own with a little room to spare. */
+const TITLE_LEADING: Partial<Record<Era['id'], number>> = {
+  ego: 1.22,
 }
 
 /* Only these two eras wear their own face. Dall stays on the display family. */
@@ -117,13 +129,23 @@ const TITLE_FACE: Partial<Record<Era['id'], string>> = {
 /** Longest line spans the full viewport, flush to one edge, overflowing neither. */
 const TARGET_SPAN = 100
 
-function titleSize(era: Era, lines: string[]): string {
-  const longest = Math.max(...lines.map((l) => l.length))
-  const vw = TARGET_SPAN / (longest * TITLE_ADVANCE[era.id])
-  // A floor, not a clamp. An upper bound would silently break the promise that
-  // every era title spans the viewport — "Dall" needs 47.5vw and a 34rem cap
-  // held it at 37.8vw, so it stopped 20% short while the other two ran edge to
-  // edge. The floor only matters on very narrow screens.
+/* Where going full width costs more than it buys. Aboensis carries 2.46em of
+   ink between the top of "Hyper" and the bottom of "Ego", so at full width the
+   pair stands 994px tall — on a 900px screen "Ego" starts below the fold and
+   the era photo vanishes under the strokes. Three quarters of the frame keeps
+   the whole title on screen and the photo legible through it. The other two
+   faces sit close enough to their advances that they do not need this. */
+const TITLE_SPAN: Partial<Record<Era['id'], number>> = {
+  ego: 72,
+}
+
+function titleSize(era: Era): string {
+  const vw = (TITLE_SPAN[era.id] ?? TARGET_SPAN) / TITLE_INK[era.id]
+  // A floor, not a clamp. A blanket upper bound would cut titles short without
+  // saying so — "Dall" needs 47.5vw and a 34rem cap held it at 37.8vw, 20% shy
+  // of the edge, while the other two ran full width. Where a title genuinely
+  // should stop short it says so in TITLE_SPAN. The floor only matters on very
+  // narrow screens.
   return `max(3.5rem, ${vw.toFixed(1)}vw)`
 }
 
@@ -333,7 +355,7 @@ export function EraPanel({ era, index }: EraPanelProps) {
             data-chroma
             style={
               {
-                fontSize: titleSize(era, lines),
+                fontSize: titleSize(era),
                 // Archivo's axes, and only for the eras still set in Archivo —
                 // written inline, these would otherwise beat the .u-face class
                 // and ask a static font for a width axis it does not have.
@@ -344,6 +366,11 @@ export function EraPanel({ era, index }: EraPanelProps) {
                       fontVariationSettings: '"wdth" var(--wdth), "wght" 800',
                       fontStretch: 'normal',
                     }),
+                ...(TITLE_OVERHANG[era.id] && {
+                  paddingInlineStart: `${TITLE_OVERHANG[era.id]!.start}em`,
+                  paddingInlineEnd: `${TITLE_OVERHANG[era.id]!.end}em`,
+                }),
+                ...(TITLE_LEADING[era.id] && { lineHeight: TITLE_LEADING[era.id] }),
               } as React.CSSProperties
             }
           >
