@@ -530,9 +530,25 @@
     height: 24px;
   }
 
-  /* Shown and hidden by its rider in RollCall, so it starts visible itself. */
-  .roll-spark {
+  /* Shown and hidden by their rider in RollCall, so they start visible. */
+  .roll-spark,
+  .roll-ghost {
     opacity: 1;
+  }
+  .roll-ghost {
+    position: absolute;
+    top: 0;
+  }
+  /* The trail sits above the spark and fades to nothing a fifth of a screen
+     up. currentColor, so it changes colour with the spark it follows. */
+  .roll-trail {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 2px;
+    height: 22vh;
+    translate: -50% 0;
+    background: linear-gradient(to top, currentColor, transparent);
   }
 
   /* The chapter's spark is her colour, end to end. */

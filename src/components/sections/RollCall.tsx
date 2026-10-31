@@ -69,25 +69,29 @@ export function RollCall() {
         const q = (sel: string) => section.querySelector<HTMLElement>(sel)
         const circles = gsap.utils.toArray<HTMLElement>('[data-roll-circle]', section)
         const seeds = gsap.utils.toArray<HTMLElement>('[data-roll-seed]', section)
-        const axis = q('[data-roll-axis]')
-        const line = q('[data-roll-line]')
         const rider = q('[data-roll-rider]')
+        const prism = q('[data-roll-prism]')
         const spark = q('[data-roll-spark]')
         const stage = q('[data-roll-stage]')
         const mark = q('[data-roll-mark]')
         const label = q('[data-roll-label]')
-        if (!axis || !line || !rider || !spark || !stage || !mark || !label) return
+        if (!rider || !prism || !spark || !stage || !mark || !label) return
 
         // The markup is drawn at the final frame, as a translate in %. GSAP
         // would read that back as pixels and add its own percentages on top,
         // so zero the pixel half before the timelines take over.
         gsap.set(circles, { x: 0, y: 0 })
 
-        // Before the pin: the line draws from the top of the section to its
+        // Before the pin: the spark falls from the top of the section to its
         // centre. It starts when the section's top crosses LINE_TIP and ends
         // when the centre does — half a screen later, which is exactly the
-        // line's own length — so the tip holds still on that viewport line the
-        // whole way, the same as on the map and through every chapter.
+        // distance it travels — so it holds still on that viewport line the
+        // whole way, the same as the tip of every line above it.
+        //
+        // No line this time, only a trail that fades behind it. Haseul's green
+        // carries over from her chapter, then the spark runs through all five
+        // members' colours and comes apart into a red/cyan split just before
+        // it reaches the centre — the moment before it breaks into five.
         gsap
           .timeline({
             defaults: { ease: 'none' },
@@ -98,13 +102,25 @@ export function RollCall() {
               scrub: true,
             },
           })
-          .fromTo(line, { scaleY: 0 }, { scaleY: 1, duration: 1 }, 0)
           .fromTo(rider, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.02 }, 0)
           .fromTo(rider, { top: '0%' }, { top: '100%', duration: 1 }, 0)
+          .fromTo(
+            rider,
+            { color: MEMBER_BY_ID.haseul.color },
+            {
+              keyframes: [
+                ...CHAPTERS.map((c) => MEMBER_BY_ID[c.member].color),
+                '#ffffff',
+              ].map((color) => ({ color })),
+              duration: 0.9,
+            },
+            0.05,
+          )
+          .fromTo(prism, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25 }, 0.75)
 
-        // The two timelines never touch the same property on the same
-        // element: the draw moves the rider and scales the line, the pin
-        // flares the spark inside the rider and fades the axis around both.
+        // The pin's fades are .to(), not .fromTo(): they read their start
+        // value when the playhead first reaches them, so they never stamp
+        // over the fall above on page load.
 
         const tl = gsap.timeline({
           defaults: { ease: 'none' },
@@ -124,7 +140,7 @@ export function RollCall() {
 
         // 0.1 → 0.42: it splits — five sparks fly out to the stack, in depth
         // order, and each swells into her circle as it lands.
-        tl.to(spark, { autoAlpha: 0, scale: 0.6, duration: 0.06 }, 0.1)
+        tl.to(rider, { autoAlpha: 0, duration: 0.06 }, 0.1)
         seeds.forEach((seed, i) => {
           const at = 0.1 + i * 0.05
           tl.fromTo(seed, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, at)
@@ -145,10 +161,6 @@ export function RollCall() {
             )
           }
         })
-
-        // The line has delivered all five: it fades, clearing the space the
-        // label is about to use.
-        tl.to(axis, { autoAlpha: 0, duration: 0.08 }, 0.42)
 
         // 0.48 → 0.8: one spot, overlapping, the wordmark over them.
         circles.forEach((c, i) => tl.to(c, { ...clustered(i), duration: 0.28 }, 0.48))
@@ -187,22 +199,21 @@ export function RollCall() {
       {/* The section's line, from the top edge down to the centre, with the
           spark on its tip. Desktop only, like the chapters' thread it
           continues. */}
+      {/* The falling spark, from the top edge to the centre. A trail rather
+          than a line: it fades out behind the spark instead of staying drawn.
+          The prism — red and cyan copies either side — fades in at the end.
+          Desktop only, like the chapters' line it carries on from. */}
       <div
-        data-roll-axis
         aria-hidden="true"
         className="absolute top-0 left-1/2 hidden h-1/2 motion-reduce:hidden lg:block"
       >
-        <span
-          data-roll-line
-          className="absolute inset-y-0 left-0 w-[2px] -translate-x-1/2 origin-top"
-          style={{ background: 'var(--ink)' }}
-        />
-        <span data-roll-rider className="absolute left-0">
-          <Spark
-            data-roll-spark
-            className="roll-spark"
-            style={{ color: 'var(--ink)' }}
-          />
+        <span data-roll-rider className="roll-rider absolute left-0">
+          <span className="roll-trail" />
+          <span data-roll-prism className="absolute inset-0">
+            <Spark className="roll-ghost" style={{ color: '#ff2e4c', left: -5 }} />
+            <Spark className="roll-ghost" style={{ color: '#2ef2ff', left: 5 }} />
+          </span>
+          <Spark data-roll-spark className="roll-spark" />
         </span>
       </div>
 

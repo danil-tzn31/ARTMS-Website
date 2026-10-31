@@ -79,7 +79,7 @@ export const PRESENT_ON: Partial<Record<MemberId, string>> = {
  * with the same line, one finishes on the frame the next one starts and the
  * spark passes from the map's axis into the chapters without a seam.
  */
-export const LINE_TIP = '60%'
+export const LINE_TIP = '50%'
 
 /** An optional paragraph under the map's statement. Empty renders nothing. */
 export const PROLOGUE = ''
