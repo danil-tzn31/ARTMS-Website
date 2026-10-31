@@ -254,7 +254,7 @@ export function MemberChapter({
           </p>
         </header>
 
-        <ol className="mt-[6vh] lg:mt-0">
+        <ol className="mt-[6vh] pb-[14vh] lg:mt-0 lg:pb-[8vh]">
           {ERAS.map((era, i) => {
             const absence = !member.photos[era.id]
               ? member.absence?.[era.id]
@@ -279,27 +279,29 @@ export function MemberChapter({
                   {era.title}
                 </p>
                 <p className="u-body mt-3 max-w-[38ch]">{text}</p>
+                {/* Inside the last beat rather than after the list. On its own
+                    it sat below a beat's worth of empty height, half a screen
+                    away from the words it belongs to. */}
+                {i === ERAS.length - 1 && (
+                  <button
+                    type="button"
+                    data-cursor="Open"
+                    className="u-mono group mt-8 inline-flex items-center gap-3 self-start border px-4 py-3 transition-colors duration-300"
+                    style={{ borderColor: 'var(--rule-strong)' }}
+                    onPointerEnter={onIntent}
+                    onFocus={onIntent}
+                    onClick={(e) => onOpen(member, e.currentTarget)}
+                  >
+                    Open the full file
+                    <span aria-hidden="true" style={{ color: member.color }}>
+                      →
+                    </span>
+                  </button>
+                )}
               </li>
             )
           })}
         </ol>
-
-        <div className="pt-4 pb-[14vh] lg:pb-[6vh]">
-          <button
-            type="button"
-            data-cursor="Open"
-            className="u-mono group inline-flex items-center gap-3 border px-4 py-3 transition-colors duration-300"
-            style={{ borderColor: 'var(--rule-strong)' }}
-            onPointerEnter={onIntent}
-            onFocus={onIntent}
-            onClick={(e) => onOpen(member, e.currentTarget)}
-          >
-            Open the full file
-            <span aria-hidden="true" style={{ color: member.color }}>
-              →
-            </span>
-          </button>
-        </div>
       </div>
     </article>
   )
