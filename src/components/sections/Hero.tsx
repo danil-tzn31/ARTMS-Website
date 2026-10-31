@@ -90,7 +90,6 @@ export function Hero() {
         data-hero-video
         className="absolute inset-0 size-full object-cover"
         style={{ filter: 'brightness(0.92) saturate(0.82) contrast(1.06)' }}
-        src={VIDEO.mp4}
         poster={VIDEO.poster}
         autoPlay
         muted
@@ -99,7 +98,11 @@ export function Hero() {
         preload="metadata"
         aria-hidden="true"
         tabIndex={-1}
-      />
+      >
+        {VIDEO.sources.map(({ src, media }) => (
+          <source key={src} src={src} media={media} type="video/mp4" />
+        ))}
+      </video>
 
       {/* Two scrims. The static one buys legibility for the corner metadata
           regardless of what the footage is doing behind it; the scrubbed one

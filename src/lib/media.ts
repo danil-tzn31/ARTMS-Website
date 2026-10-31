@@ -29,7 +29,15 @@ export function fallbackSrc(slug: string): string | undefined {
   return `${BASE}/webp/${slug}-${widest}.webp`
 }
 
+/**
+ * The hero footage at two widths. The browser takes the first source whose
+ * `media` matches, so the large one has to come first. See process-video.mjs
+ * for why there are two.
+ */
 export const VIDEO = {
-  mp4: `${BASE}/video/hero.mp4`,
+  sources: [
+    { src: `${BASE}/video/hero-1280.mp4`, media: '(min-width: 1024px)' },
+    { src: `${BASE}/video/hero-960.mp4` },
+  ],
   poster: `${BASE}/video/hero.jpg`,
 }

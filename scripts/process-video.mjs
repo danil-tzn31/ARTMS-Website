@@ -2,10 +2,10 @@
 /**
  * Re-encodes the hero footage for the web.
  *
- * The source is a 60 s 1080p master (~21 MB). It sits behind a scanline +
- * grain stack at partial opacity, so 720p is visually indistinguishable and
- * roughly a quarter of the bytes. Audio is stripped — the video is decorative
- * and autoplays muted.
+ * The source is a 54 s 4K/60 master (~366 MB). It sits behind a scanline +
+ * grain stack at partial opacity, so 960px wide at 24 fps is visually
+ * indistinguishable on the page and a small fraction of the bytes. Audio is
+ * stripped — the video is decorative and autoplays muted.
  *
  *   npm run video            # both codecs + poster
  *   npm run video -- --only mp4
@@ -29,19 +29,34 @@ const only = process.argv.includes('--only')
 // VP9 is opt-in. Every browser that can run this site plays H.264, and a VP9
 // pass over 60 s of denoised 960p costs minutes of CPU to save bytes nobody
 // downloads twice. Run `npm run video -- --only webm` if you want it.
-const DEFAULT_JOBS = ['mp4', 'poster', 'og']
+const DEFAULT_JOBS = ['mp4', 'mp4-lg', 'poster', 'og']
 
 // The master is heavily grained, and grain is the enemy of inter-frame
 // compression — a straight 720p/CRF30 pass still came out at 17 MB. Denoising
 // first costs nothing visually here (the site lays its own grain and scanlines
 // over the top) and cuts the bitrate by ~5x.
-const VF = 'scale=960:-2,hqdn3d=4:3:6:4.5,fps=24'
+const vf = (width) => `scale=${width}:-2,hqdn3d=4:3:6:4.5,fps=24`
+
+// Two widths, picked by the <video> by screen size: 960 for phones and small
+// laptops, 1280 from 1024px up. At this CRF 1280 is 9.1 MB against 5.2 MB —
+// worth it where the video fills a large screen, not on a phone's data plan.
+// 1920 came out near 20 MB and, under the scanlines and grain, did not look
+// like a fourfold improvement on 960.
+const h264 = (width) => [
+  '-i', IN, '-an', '-vf', vf(width),
+  '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'slow',
+  // 38 rather than 36 since the 4K master: at 960, 5.2 MB against 6.9 MB, and
+  // side by side on a paused close-up frame the two are hard to tell apart.
+  '-crf', '38', '-pix_fmt', 'yuv420p',
+  '-movflags', '+faststart', '-y',
+]
 const exists = (p) => access(p).then(() => true, () => false)
 const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`
 
 /** Output filename per job. */
 const OUTPUTS = {
-  mp4: 'hero.mp4',
+  mp4: 'hero-960.mp4',
+  'mp4-lg': 'hero-1280.mp4',
   webm: 'hero.webm',
   poster: 'hero.jpg',
   og: 'og.jpg',
@@ -49,14 +64,10 @@ const OUTPUTS = {
 
 /** @type {Record<string, string[]>} */
 const JOBS = {
-  mp4: [
-    '-i', IN, '-an', '-vf', VF,
-    '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'slow',
-    '-crf', '36', '-pix_fmt', 'yuv420p',
-    '-movflags', '+faststart', '-y',
-  ],
+  mp4: h264(960),
+  'mp4-lg': h264(1280),
   webm: [
-    '-i', IN, '-an', '-vf', VF,
+    '-i', IN, '-an', '-vf', vf(960),
     '-c:v', 'libvpx-vp9', '-crf', '42', '-b:v', '0',
     '-row-mt', '1', '-cpu-used', '8', '-deadline', 'good',
     '-pix_fmt', 'yuv420p', '-y',

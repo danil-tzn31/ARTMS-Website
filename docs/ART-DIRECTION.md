@@ -177,7 +177,7 @@ a row.** Placement rules:
 ## 6. Section choreography
 
 ### N°001 — HERO
-Full-bleed `hero.mp4`, desaturated and pushed under a scanline +
+Full-bleed hero footage, desaturated and pushed under a scanline +
 grain stack. `ARTMS` at 26 vw clipped top and sides. Corner metadata: `EST.
 2024 · MODHAUS`, live KST clock, `5 MEMBERS / 3 ERAS`. On scroll the wordmark
 compresses along Archivo's width axis and docks into the top frame rule as the
