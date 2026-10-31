@@ -59,9 +59,15 @@ export const COLOPHON: Credit[] = [
   },
   {
     label: 'Serif',
-    name: 'Instrument Serif',
-    url: 'https://fonts.google.com/specimen/Instrument+Serif',
+    name: 'PP Right Didone',
+    url: 'https://pangrampangram.com/products/right-didone',
+    note: 'Alexander Slobzheninov',
   },
+  // The two era faces. No links: neither has a page of its own that could be
+  // confirmed, and a guessed link is worse than none. The designers are named
+  // as each font file names them.
+  { label: 'Club Icarus', name: 'Ancial', note: 'Anne-Dauphine Borione' },
+  { label: 'Hyper-Ego', name: 'Aboensis', note: 'Tommi Syrjanen' },
   {
     label: 'Hangul',
     name: 'Noto Sans KR',

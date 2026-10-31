@@ -109,7 +109,8 @@ a settings tray.
 |---|---|---|
 | Display | **Archivo** (variable, wdth 62–125, wght 100–900) | Width axis set per role and held there — the hero sits at 78, the preloader at 74. It was animated on scroll and that was wrong: the mark read as stretched until you moved, and the inverted mode exposed the scrub. |
 | Micro / UI | **Space Mono** 400/700 | All labels, metadata, tracklists, nav |
-| Angelcore accent | **Instrument Serif** italic | Sparingly — era subtitles, member hangul romanisation |
+| Angelcore accent | **PP Right Didone** Light Italic | Sparingly — statements, era subtitles, member lines |
+| Era titles | **Ancial** (Club Icarus), **Aboensis** (Hyper-Ego) | One static weight each, uppercase only; set in the era title and its marquee item, nowhere else. Dall stays in Archivo |
 | Korean | **Noto Sans KR**, subset to 23 glyphs | Hangul only — `npm run fonts` builds a 2.5 kB file instead of the 539 kB published slice |
 
 ### Scale

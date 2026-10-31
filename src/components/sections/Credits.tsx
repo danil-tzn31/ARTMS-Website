@@ -192,6 +192,7 @@ export function Credits() {
                 ) : (
                   item.name
                 )}
+                {item.note && <span className="u-dim"> — {item.note}</span>}
               </dd>
             </div>
           ))}

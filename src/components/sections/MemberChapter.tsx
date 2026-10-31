@@ -284,7 +284,7 @@ export function MemberChapter({
           })}
         </ol>
 
-        <div className="pb-[14vh] pt-4">
+        <div className="pt-4 pb-[14vh] lg:pb-[6vh]">
           <button
             type="button"
             data-cursor="Open"

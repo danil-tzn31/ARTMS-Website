@@ -312,11 +312,12 @@
   }
 
   .soul-circle {
+    background: var(--disc);
     transition: background-color 300ms var(--ease-out-expo);
   }
   .soul-circle:hover,
   .soul-circle:focus-visible {
-    background: color-mix(in srgb, var(--member) 14%, transparent);
+    background: color-mix(in srgb, var(--member) 14%, var(--disc));
   }
 
   .cf {
@@ -482,6 +483,13 @@
   .roll-circle {
     mix-blend-mode: multiply;
   }
+  /* Multiply blends with everything behind it, the incoming line included, so
+     the line showed straight through the circles. Isolated, the circles only
+     multiply with each other and the stage sits over the line as one solid
+     shape. */
+  .roll-stage {
+    isolation: isolate;
+  }
 
   .spark {
     display: block;
@@ -506,6 +514,11 @@
   .map-spark {
     width: 24px;
     height: 24px;
+  }
+
+  /* Shown and hidden by its rider in RollCall, so it starts visible itself. */
+  .roll-spark {
+    opacity: 1;
   }
 
   /* The chapter's spark is her colour, end to end. */

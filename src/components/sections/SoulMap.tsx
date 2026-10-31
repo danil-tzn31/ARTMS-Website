@@ -118,11 +118,12 @@ export function SoulMap({ onJump }: SoulMapProps) {
       // Handed over, not left behind: the first chapter's spark takes the tip
       // from here, on the same line, on the same frame.
       tl.to(spark, { autoAlpha: 0, duration: 0.02 }, 0.98)
+      const rings = gsap.utils.toArray<HTMLElement>('[data-map-ring]', root.current)
       circles.forEach((circle, i) => {
         const at = (LAYOUT.tops[i] ?? 0) / LAYOUT.height
         const member = CHAPTERS[i] && MEMBER_BY_ID[CHAPTERS[i].member]
         tl.fromTo(
-          circle,
+          [circle, rings[i]].filter(Boolean),
           { scale: 0.85, autoAlpha: 0 },
           { scale: 1, autoAlpha: 1, duration: 0.07 },
           Math.max(0, at - 0.03),
@@ -245,9 +246,12 @@ export function SoulMap({ onJump }: SoulMapProps) {
                       height: `calc(var(--u) * ${d})`,
                       top: `calc(var(--u) * ${top})`,
                       left: `calc(50% - var(--u) * ${d / 2})`,
-                      border: `2px solid ${member.color}`,
+                      // Filled (see .soul-circle), so the axis passes behind
+                      // the circle rather than through its label. The ring is
+                      // drawn separately, above every fill — see below.
                       zIndex: i + 1,
                       '--member': member.color,
+                      '--disc': dark ? DEPTH_DARK['--bg'] : 'var(--bg)',
                       ...(dark && {
                         '--ink': DEPTH_DARK['--ink'],
                         '--ink-dim': DEPTH_DARK['--ink-dim'],
@@ -270,6 +274,29 @@ export function SoulMap({ onJump }: SoulMapProps) {
             )
           })}
         </ol>
+
+        {/* The rings, in a layer of their own above every circle's fill. Drawn
+            on the circles themselves, each opaque fill covered the lower arc of
+            the circle above it, and the map stopped reading as five
+            overlapping circles and became a stack of discs. */}
+        {CHAPTERS.map((chapter, i) => {
+          const d = DIAMETERS[i] ?? 1
+          return (
+            <span
+              key={chapter.member}
+              data-map-ring
+              aria-hidden="true"
+              className="pointer-events-none absolute z-10 rounded-full"
+              style={{
+                width: `calc(var(--u) * ${d})`,
+                height: `calc(var(--u) * ${d})`,
+                top: `calc(var(--u) * ${LAYOUT.tops[i] ?? 0})`,
+                left: `calc(50% - var(--u) * ${d / 2})`,
+                border: `2px solid ${MEMBER_BY_ID[chapter.member].color}`,
+              }}
+            />
+          )
+        })}
 
         <span
           className="u-mono absolute left-1/2 ml-3"
