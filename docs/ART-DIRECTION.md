@@ -1,7 +1,8 @@
 # ARTMS — Showcase Site · Art Direction & Technical Spec
 
-Personal project by Dani. Single-page scroll narrative showcasing ARTMS
-(Modhaus, debuted 2024-05-31) across three eras and five members.
+Personal project by Dani. A single-page scroll narrative for ARTMS (Modhaus,
+debuted 2024-05-31): a hero, three eras, five members told as one story, and a
+credits page that names whose work all of it is.
 
 ---
 
@@ -9,31 +10,33 @@ Personal project by Dani. Single-page scroll narrative showcasing ARTMS
 
 | Layer | Choice | Why |
 |---|---|---|
-| Build | **Vite 8** | No SSR needed; fastest HMR for animation iteration |
-| UI | **React 19 + TypeScript** | Typed content model for eras/members |
-| Styling | **Tailwind CSS v4** (CSS-first `@theme`) | Design tokens live in CSS vars, so GSAP can tween them directly |
-| Scroll | **Lenis** | Required. Driven by the GSAP ticker (single RAF loop) |
+| Build | **Vite** | No SSR needed; fastest HMR for animation iteration |
+| UI | **React 19 + TypeScript** | Typed content model for eras, members and the members' story |
+| Styling | **Tailwind CSS v4** (CSS-first `@theme`) | Design tokens live in CSS vars, so GSAP can write them directly |
+| Scroll | **Lenis** | Smooth scroll, driven by the GSAP ticker (single RAF loop) |
 | Motion — page | **GSAP 3 + ScrollTrigger** | Scrubbed, pinned, timeline-based storytelling |
-| Motion — UI | **Framer Motion** | Member dossier overlay: shared layout + `AnimatePresence` exit |
-| Images | **sharp** prebuild script | Sources are 5–38 MB. Non-negotiable. |
-| Deploy | Static → Vercel / Netlify | Pure static output |
+| Motion — UI | **Framer Motion** | The member dossier only: `AnimatePresence` for its exit. Code-split, loaded on first intent |
+| Images | **sharp** prebuild script | Sources run 0.7–38 MB. Non-negotiable |
+| Video | **ffmpeg** prebuild script | A 366 MB master becomes two small web files |
+| Deploy | Static → Vercel | Pure static output |
 
-**Division of labour between the two motion libraries is deliberate, not
-redundant:** GSAP owns anything tied to scroll position; Framer Motion owns
-anything tied to component mount/unmount. They never animate the same property
-on the same element.
+**The two motion libraries split by job, not by taste:** GSAP owns anything
+tied to scroll position; Framer Motion owns anything tied to mount and
+unmount. They never animate the same property on the same element.
 
-### Lenis ↔ GSAP wiring (the part people get wrong)
+### Lenis ↔ GSAP wiring
 
 ```ts
-const lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 0.9 })
-lenis.on('scroll', ScrollTrigger.update)
+const lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.9 })
+lenis.on('scroll', () => ScrollTrigger.update())
 gsap.ticker.add((t) => lenis.raf(t * 1000))
 gsap.ticker.lagSmoothing(0)
 ```
 
-One RAF loop, ScrollTrigger reads Lenis's virtual scroll. Never run
-`requestAnimationFrame(raf)` separately alongside the ticker.
+One RAF loop; ScrollTrigger reads Lenis's scroll. Never run a separate
+`requestAnimationFrame` alongside the ticker. While the dossier is open the
+ticker callback comes off and the global timeline pauses — stopping Lenis
+alone stops the scrolling, not the work.
 
 ---
 
@@ -57,12 +60,10 @@ Verified Beauty / BURN
 **Hyper-Ego** — From Wings To Soul / BORN STUNNER / Blue Blood / ICARUS GANG /
 HYPER CRUSH / Pixel Memory
 
-> Haseul does not appear in Hyper-Ego promotional material (she appears only on
-> the opening track). The media folder reflects this — there is no `HaseulEgo`
-> photo. **The site must handle this as a designed state, not a broken image.**
-> Her Hyper-Ego slot renders as a typographic placard: `HASEUL — 부재 / ABSENT ·
-> FROM WINGS TO SOUL`. This turns a data gap into the most emotionally loaded
-> moment on the page.
+> Haseul does not appear in Hyper-Ego promotional material — she appears only
+> on the opening track. There is no `HaseulEgo` photo, and **the site treats
+> that as a designed state, never a broken image**: an empty dashed circle in
+> her chapter, and a `부재 / ABSENT` placard in her dossier.
 
 ### Members
 
@@ -74,32 +75,61 @@ HYPER CRUSH / Pixel Memory
 | Jinsoul | 진솔 | Blue `#1B4FE0` | Blue Betta | Dall · Icarus · Ego |
 | Choerry | 최리 | Purple `#8B2FE0` | Bat | Dall · Icarus · Ego |
 
+### The members' story
+
+The members section follows xio_orbit's reading of the group, *ARTMS' Map of
+the Soul*: the five members as five parts of one psyche, from the face shown
+to the world down to the part kept deepest. The chapters run in that order,
+not the order of `MEMBERS`.
+
+| Depth | Member | Part | Where |
+|---|---|---|---|
+| 01 | Choerry | Persona | the surface |
+| 02 | Kim Lip | Ego | under the surface |
+| 03 | Heejin | Self | the centre |
+| 04 | Jinsoul | Shadow | below |
+| 05 | Haseul | Anima | the deepest |
+
+The words — a line per part, a line per member per era, an optional prologue —
+live in `src/data/member-story.ts` and are mine to write. Every one of them can
+be empty: a missing part line falls back to the part's name, a missing era
+line to the era's title track. Nothing placeholder-ish ever renders.
+
 ---
 
 ## 3. Palette — the narrative spine
 
-The three era palettes are not decoration; they drive a **global luminance arc**.
-Root CSS custom properties are tweened by ScrollTrigger as each era enters, so
-the entire page re-skins in place.
+The palettes are not decoration; they drive a **luminance arc** across the
+whole page. Every surface reads from root custom properties, so changing them
+re-skins everything at once.
 
 ```
-HERO        Dall             Club Icarus       Hyper-Ego
-#08060C  →  #0B0710       →  #050705        →  #EFEDE7
-near-black  violet-black     toxic black       off-white
+HERO        Dall          Club Icarus     Hyper-Ego   Members            Roll call
+#08060C  →  #0B0710   →   #050705     →   #EFEDE7  →  light, then dark → light
+near-black  violet-black  toxic black     off-white   from the Shadow
 ```
 
-| Token | Hero | Dall | Icarus | Hyper-Ego |
-|---|---|---|---|---|
-| `--bg` | `#08060C` | `#0B0710` | `#050705` | `#EFEDE7` |
-| `--ink` | `#E8E6F0` | `#EADCF2` | `#D8FFD8` | `#111111` |
-| `--accent` | `#C9A7F0` | `#C9A7F0` | `#00FF5A` | `#E5241B` |
-| `--accent-2` | `#FFC2DE` | `#FFC2DE` | `#0B3D1B` | `#8A8580` |
+| Token | Hero | Dall | Icarus | Hyper-Ego | Members, Shadow on |
+|---|---|---|---|---|---|
+| `--bg` | `#08060C` | `#0B0710` | `#050705` | `#EFEDE7` | `#0C0C0E` |
+| `--ink` | `#E8E6F0` | `#EADCF2` | `#D8FFD8` | `#121110` | `#ECEAE5` |
+| `--accent` | `#C9A7F0` | `#C9A7F0` | `#00FF5A` | `#E5241B` | the member's colour |
 
-**Why this matters:** the page inverts *itself* by the third era. The manual
-invert toggle therefore reads as a theme the site already believes in, rather
-than a novelty button bolted on because the reference site had one. It lives on
-the top frame rule only — a second copy in the footer made the colophon read as
-a settings tray.
+- **Eras fade.** Each era panel crossfades the palette as it enters
+  (`useEraTheme`). Three changes, far apart, with nothing sticky on screen.
+- **Members cut.** In the members section the accent becomes each member's
+  colour, and the page turns dark from Jinsoul's chapter down (`useDepthTheme`).
+  Those changes are cuts, not fades: a fading root variable restyles and
+  repaints the whole page every frame, and with the sticky figures and their
+  filters on screen that made the Heejin → Jinsoul boundary visibly stutter.
+  Measured at 4× CPU throttle, the cut took dropped-frame time from 1.3 s to
+  about 0.75 s — the same as not changing the palette at all.
+- `--rule` and `--rule-strong` are mixed from `--ink` in `tokens.css`, so they
+  follow every change by themselves. Nothing writes them directly.
+
+By the third era the page has inverted *itself*, which is why the manual
+invert toggle reads as a theme the site already believes in rather than a
+novelty. It lives on the top frame rule only.
 
 ---
 
@@ -107,118 +137,174 @@ a settings tray.
 
 | Role | Family | Notes |
 |---|---|---|
-| Display | **Archivo** (variable, wdth 62–125, wght 100–900) | Width axis set per role and held there — the hero sits at 78, the preloader at 74. It was animated on scroll and that was wrong: the mark read as stretched until you moved, and the inverted mode exposed the scrub. |
-| Micro / UI | **Space Mono** 400/700 | All labels, metadata, tracklists, nav |
-| Angelcore accent | **PP Right Didone** Light Italic | Sparingly — statements, era subtitles, member lines |
-| Era titles | **Ancial** (Club Icarus), **Aboensis** (Hyper-Ego) | One static weight each, uppercase only; set in the era title and its marquee item, nowhere else. Dall stays in Archivo |
+| Display | **Archivo** (variable, wdth 62–125, wght 100–900) | Width set per role and held — the hero at 78, the preloader at 74. **The width axis never animates**: tried on the hero, it read as a stretched mark until you scrolled |
+| Micro / UI | **Space Mono** 400/700 | Labels, metadata, tracklists, nav |
+| Statement serif | **PP Right Didone** Light Italic | Statements, era subtitles, era names in the member chapters, part names on the map |
+| Era titles | **Ancial** (Club Icarus), **Aboensis** (Hyper-Ego) | Uppercase-only faces, one static weight each. Set in the era title and its marquee item, nowhere else. Dall stays in Archivo |
 | Korean | **Noto Sans KR**, subset to 23 glyphs | Hangul only — `npm run fonts` builds a 2.5 kB file instead of the 539 kB published slice |
+
+Ancial and Aboensis are subset to the handful of capitals they actually draw
+(3.4 kB and 6.7 kB) — `CLUB ICARUS` and `HYPER-EGO`, space and hyphen included.
 
 ### Scale
 
-Display type is set in `vw` with `clamp()` floors, deliberately oversized:
+Display type is set in `vw` with `clamp()` floors, deliberately oversized.
 
-- Hero wordmark: `clamp(6rem, 26vw, 34rem)` — **intentionally clipped by the
-  viewport edge**, letterforms bleeding off-canvas left and right
-- Era titles: `clamp(4rem, 14vw, 20rem)`
-- Member index rows: `clamp(3rem, 9vw, 12rem)`
-- Micro type: `10px / 0.14em tracking / uppercase` — the deliberate size gap
-  between display and micro *is* the visual system
+- **Hero wordmark** — `clamp(6.5rem, 39vw, 50rem)`, clipped by the viewport
+  edge on purpose.
+- **Era titles** — sized so the longest line spans the viewport exactly. The
+  size comes from each face's **ink width**, measured in the browser, not its
+  advance width: for a grotesque the two agree, but Aboensis draws 8% wider
+  than its advance and starts left of its own origin. Hyper-Ego is held to
+  72% of the width — at full width its two lines stood taller than the screen.
+- **Member names** — `clamp(4rem, 9vw, 9rem)`; the outlined name behind each
+  figure runs `clamp(8rem, 21vw, 24rem)` off the left edge.
+- **Statements** — `clamp(1.9rem, 4.2vw, 4.4rem)` on the members map and the
+  roll call; `clamp(1.5rem, 3.2vw, 3.4rem)` elsewhere.
+- **Micro type** — 12–15 px, `0.1–0.13em` tracking, uppercase. Small next to
+  the display sizes, never small enough to squint at.
 
-### Grain & ink bleed
+### Ink bleed
 
-A single SVG filter chain, applied to display type via `filter: url(#inkbleed)`:
+One SVG filter chain on display type, `filter: url(#inkbleed)` (and a softer
+`#inkbleed-soft` for mid-size headings):
 
 ```
-feTurbulence(fractalNoise, baseFrequency .013 .052, octaves 3)
+feTurbulence(fractalNoise, baseFrequency .013 .052, octaves 3)   — static
   → feDisplacementMap(scale 2.6)
   → feGaussianBlur(0.45)
-  → feComponentTransfer / feFuncA (alpha crush, re-hardens the edge)
-
-The whole chain runs with color-interpolation-filters="sRGB". Two traps worth
-recording, both of which cost real time to find:
-
-  · The SVG default is linearRGB, which shifts every colour passing through.
-  · Crushing alpha with feColorMatrix leaves premultiplied RGB untouched, so
-    the browser divides by the larger alpha on the way out and light glyphs
-    render near-black. feFuncA avoids it.
+  → feComponentTransfer / feFuncA   (alpha crush, re-hardens the edge)
 ```
 
-`baseFrequency` is animated on a slow 8.3 s loop so the texture breathes. A second
-static grain layer (`feTurbulence` at 0.8 opacity, `mix-blend-mode: overlay`)
-sits fixed over the whole viewport.
+Two traps, both of which cost real time:
 
-**Performance guard:** SVG filters on huge text are expensive. They are applied
-only to elements currently in the viewport, promoted with `will-change: filter`,
-and dropped entirely under `prefers-reduced-motion` and below 768 px.
+- The chain runs with `color-interpolation-filters="sRGB"`. The SVG default is
+  linearRGB, which shifts every colour passing through.
+- The alpha crush uses `feFuncA`, not `feColorMatrix`. Boosting alpha in a
+  colour matrix leaves premultiplied RGB untouched, so light glyphs render
+  near-black.
+
+The turbulence is static. It used to animate `baseFrequency` so the texture
+breathed, and together with a drifting scanline layer that held the page at
+11.7 fps while it sat still. The filter also switches off while the page is
+scrolling, below 768 px, on touch screens and under reduced motion — the
+texture is for when the page is still, which is when it can be seen.
 
 ---
 
 ## 5. Layout system — how it avoids looking like a template
 
-A 12-column grid exists, but **nothing is allowed to start at column 1 twice in
-a row.** Placement rules:
+A 12-column grid exists, but **nothing starts at column 1 twice in a row.**
 
-1. **Edge frame.** A hairline rule inset 20 px from all four viewport edges runs
-   the full page. The navbar is not *near* the edge — it sits *on* this frame:
-   wordmark on the top rule, vertical nav rail on the right rule (gobold-style,
-   labels + tick marks), status ticker on the bottom rule, invert toggle on the
-   top rule at centre-right in a red-outlined mono box.
-2. **Alternating anchor.** Each section anchors from a different edge — Hero
-   from the top-left bleed, Eras from the right, Members from a centred axis,
-   Footer from the bottom-left.
-3. **Overlap is required.** Photos overlap the type layer at ±8–14 % offsets
-   with mixed z-order. Nothing sits in a tidy card.
-4. **Baseline breaks.** Multi-line statements stagger their indents per line
-   (the `bleibtgleich.dev` move) — line 2 starts at col 4, line 3 at col 2.
-5. **Numbered markers.** Every section carries a `N°001 / HERO` mono marker in
-   the margin (the `pxpush` move), pinned opposite the content anchor.
+1. **Edge frame.** A hairline rule inset 20 px (28 px from `lg`) runs the full
+   page. The navigation sits *on* it: wordmark on the top rule, the invert
+   toggle centred on the top rule, the section rail on the right rule, the
+   fan-archive notice and live KST clock on the bottom rule.
+2. **Alternating anchor.** Hero from the top-left bleed, eras alternating
+   edges, members down the centre line, credits back to the bottom-left.
+3. **Overlap is required.** Photos overlap type at mixed z-order. Nothing
+   sits in a tidy card.
+4. **Staggered statements.** Multi-line statements break by hand and indent
+   unevenly per line.
+5. **Numbered markers.** Every section carries an `N°00x / NAME` mono marker
+   with a hairline running out to the frame.
 
 ---
 
 ## 6. Section choreography
 
+### Preloader
+Two and a half seconds — one rotation of the sigil — then gone for the
+session. A boot sequence loading the three eras by name, not a percentage of
+anything. Skipped under reduced motion.
+
 ### N°001 — HERO
-Full-bleed hero footage, desaturated and pushed under a scanline +
-grain stack. `ARTMS` at 26 vw clipped top and sides. Corner metadata: `EST.
-2024 · MODHAUS`, live KST clock, `5 MEMBERS / 3 ERAS`. On scroll the wordmark
-compresses along Archivo's width axis and docks into the top frame rule as the
-permanent nav mark — one continuous FLIP, not a fade-swap.
+The hero footage full-bleed, graded down (`brightness .92 · saturate .82`)
+and pushed under the scanline and grain stack. `ARTMS` at wdth 78 sits over it
+with `mix-blend-mode: difference`, so it inverts whatever the footage is doing.
+Label and member count top-left, live Seoul time top-right, and bottom-left a
+serif line — *Angel software, booting.* — over the three era names. The hero
+pins for 90% of a screen while the wordmark rises and shrinks and the footage
+pushes in.
 
 ### Interstitial — TRANSMISSION
-Full-width mono marquee band. Direction and velocity are driven by Lenis scroll
-velocity; it reverses when the user reverses. Cheap, and immediately reads as
-hand-built.
+A mono ticker at display size on an opaque band, inset to the frame. Words
+alternate solid and outlined; Club Icarus and Hyper-Ego are set in their own
+faces. It drifts on its own, speeds up with scroll velocity, and reverses when
+the scroll does.
 
 ### N°002 — ERAS
-Three stacked panels, each pinned for the duration of its own reveal. On entry
-the root palette tokens tween to that era's set (see §3).
+Three panels, not pinned — the palette change carries the beat, and three
+pinned screens in a row feels like the page has stopped responding.
 
-Per panel:
-- Era title, enormous, bleeding off the **right** edge, rotated `-90°` on wide
-  viewports
-- Release date as a large numeral block, bottom-left, mono
-- Tracklist as a numbered mono column pinned to the right rail. **Hovering a
-  track cross-fades the group photo behind it** and pushes the track number to
-  the accent colour
-- Group photos in a scattered overlapping cascade at mixed scales, parallaxed at
-  differing depths (`y: -8%` to `+14%`)
+- The title spans the viewport flush to one edge, alternating sides, and wipes
+  in from its baseline.
+- Subtitle and statement in the serif; release type and a large dotted date.
+- Tracklist on a sticky right rail. Hovering or focusing a track crossfades
+  the panel's photo; every photo is also visible in the cascade.
+- Group photos in a hand-placed cascade — a `{ top, left, width, rotate, z,
+  ratio }` per photo, never a formula — parallaxed at depths from 0.4 to 1.4.
 
 ### N°003 — MEMBERS
-**Not a row of five cards.** An oversized index list — five full-width name rows
-stacked, each with animal glyph + colour swatch + era ticks as mono metadata.
+The members as a descent through one soul.
 
-- Hover: the member's colour floods the row from the left as a clip-path wipe,
-  the name switches to inverted ink, and a photo follows the cursor with damped
-  lag
-- Click: full-screen **dossier overlay** (Framer Motion shared layout). Left
-  rail — name, hangul, animal, colour hex, era participation. Right — per-era
-  photo strip with era tabs. `Esc` and a mono close control both dismiss; focus
-  is trapped and restored to the originating row
+**The map.** The statement *Five members. / One soul, / split five ways.*,
+then five overlapping circles on the page's centre line, outer world at the
+top, inner world at the bottom. A line draws down the axis with a spark on its
+tip that takes each member's colour as it enters her circle; each circle opens
+as the line reaches it. The circles are filled, so the line passes behind
+them. The page darkens behind Shadow and Anima, previewing the descent. Each
+circle is a button to its chapter.
 
-### N°004 — FOOTER
-Giant `ARTMS` wordmark scanline-warped across the full width (`pxpush` move).
-Credits grid for media owners and scanners, back-to-top, KST timestamp,
-`© 2026 — FAN PROJECT · NOT AFFILIATED WITH MODHAUS`.
+**The chapters.** Figure left, text right. Each member has one background-cut
+photo standing in a circle of her colour, her head breaking out of the top.
+The figure is sticky while three era beats scroll past; each beat changes how
+she looks, not which photo shows:
+
+| Era | Look |
+|---|---|
+| Dall | White bloom — brightness lift and a double white glow |
+| Club Icarus | Pulled halfway to a single toxic-green ramp (`#era-toxic`), with a green glow |
+| Hyper-Ego | Red echoes (`#era-echo-red`) offset behind her, kept inside the circle |
+
+The three looks are stacked copies of one image; a `data-active` attribute
+written straight from the scroll triggers picks the visible one, so scrolling
+never re-renders anything. Each figure's fit in its circle — height, head
+position, how far the crown breaks out — is hand-tuned per member in
+`FIGURE_FIT`, so heads come out close in size across very different photos.
+
+On the right: chapter number and depth, name, hangul, animal, colour, the
+part line, then the three beats, the last one ending in **Open the full
+file**. The chapter's line runs down the centre of the page in her colour,
+continuing the map's axis, with her spark on its tip.
+
+A **depth rail** on the left edge — Persona to Anima — shows where you are
+and jumps between chapters. Desktop only.
+
+**Haseul.** Her Hyper-Ego beat leaves the circle standing without her: the
+figure fades, the circle turns dashed, and `부재 / ABSENT / Present on — From
+Wings To Soul` sits inside it. Her line turns dashed across that beat.
+
+**The dossier.** A full-screen record per member: name, hangul, legal name,
+birth date, animal, colour, eras, and era tabs over a fixed 4:3 photo frame.
+The frame never changes shape between tabs; every photo's crop is aimed with
+its own `object-position`. Escape, the close button and the backdrop all
+dismiss it; focus is trapped while open and returned to the button that opened
+it.
+
+**The roll call.** The line keeps going into the last screen and draws to its
+centre. When the screen pins, the spark splits into five — one per member, in
+depth order — and each flies to a stack and swells into her circle. The five
+slide into one spot (`multiply`, isolated so the line stays behind), the stage
+grows to full size, and the wordmark and *Five members — one soul* settle over
+it.
+
+### N°004 — CREDITS
+Anchored bottom-left. *None of this is mine. / It is only gathered.* — the
+fan-archive statement set large, not buried in small print. Credits for media,
+scans and the lore reading; a colophon naming every typeface and its designer;
+back to top, a live Seoul timestamp, and a full-width `ARTMS` wordmark that
+wipes in as the last thing on the page.
 
 ---
 
@@ -226,29 +312,46 @@ Credits grid for media owners and scanners, back-to-top, KST timestamp,
 
 | Effect | Implementation |
 |---|---|
-| Scanlines | Fixed `repeating-linear-gradient`, 3 px pitch, `mix-blend-mode: overlay` at rest. Static — the drift animated a blended full-viewport layer forever and held the page at 11.7 fps while it sat still. The CRT read comes from the sweep, which carries no blend mode and costs nothing. |
-| Grain | Fixed SVG `feTurbulence` layer, `overlay`, 0.08 opacity |
-| Invert mode | `filter: invert(1) hue-rotate(180deg)` on `html` — **never on a wrapper div**, which would make it a containing block for every fixed descendant and break the frame, the scanlines and ScrollTrigger's pin. Media inverts too, deliberately. Persisted per visitor, restored before first paint by an inline script |
-| Cursor | Mono crosshair with contextual label (`VIEW` / `DRAG` / `CLOSE`). Hidden on touch |
-| Chromatic aberration | ±1.2 px R/B offset on the era titles while scrolling, driven by Lenis velocity. Declared only while the page is moving — a zero-offset shadow still paints two extra copies of every glyph. |
+| Scanlines | Fixed `repeating-linear-gradient`, 3 px pitch, `overlay` at rest. Static — the drift held the page at 11.7 fps while it sat still |
+| Grain | Fixed SVG `feTurbulence` layer, `overlay` at rest |
+| While scrolling | Scanlines and grain drop their blend mode (opacity compensated) and the ink bleed switches off; a blended full-viewport layer re-blends every frame |
+| Invert mode | `filter: invert(1) hue-rotate(180deg)` on `html` — **never on a wrapper**, which would become the containing block for every fixed element and break the frame, the overlays and ScrollTrigger's pin. Persisted per visitor and restored before first paint |
+| Cursor | Mono crosshair with a contextual label (`OPEN`, `CLOSE`…) read from `data-cursor`. Fine pointers only |
+| Chromatic split | ±1.2 px red/cyan offset on headings marked `data-chroma`, driven by scroll velocity and declared only while moving. The velocity loop sleeps when the page is still |
 
 ---
 
-## 8. Non-negotiables
+## 8. Media pipeline
 
-- **`prefers-reduced-motion`**: all scrubbed timelines resolve to their end
-  state, the CRT sweep and the marquee hold still, the chromatic split never
-  renders. The site stays fully legible and complete.
-- **Keyboard**: member rows are real `<button>`s; the dossier traps focus and
-  restores it on close.
-- **Images**: `sharp` emits AVIF + WebP at 640 / 1280 / 1920 with a base64
-  LQIP blur-up — 23 sources, 69 derivatives per format, 13 MB total. Sources
-  stay untouched in `artms media resources`.
-- **Video**: the 60 s 1080p master is denoised (grain destroys inter-frame
-  compression — a straight 720p/CRF30 pass was still 17 MB), scaled to 960p24
-  and encoded H.264 CRF 36 → 5.3 MB, plus a 39 kB poster. VP9 is opt-in only:
-  every browser that runs this site plays H.264, and the VP9 pass costs minutes
-  of CPU to save bytes nobody downloads twice.
-- **No dead placeholder content.** Every string on the page is real.
+**Images** — `npm run media`. 27 sources: 8 group shots, 14 member photos and
+5 background-cut figures. Each becomes AVIF + WebP at 640 / 1280 / 1920, plus
+one at the source's own width when it is narrower than 1920 — without that, a
+1877 px photo topped out at 1280 and looked soft on a retina screen. Photos get
+a 20 px LQIP blur-up; cut-outs don't (a blurred silhouette is a smudge) and
+keep their alpha. Cut-outs are trimmed to their silhouette so every crown sits
+at the top of its box. `MEDIA_ONLY=slug,slug` redoes just those files.
+Sources stay untouched in `artms media resources`.
+
+**Video** — `npm run video`. The master is a 54 s 4K/60 clip. It is denoised
+(grain wrecks inter-frame compression), scaled, dropped to 24 fps and encoded
+H.264 CRF 38 at two widths: 960 (5.2 MB) for phones and 1280 (9.1 MB) from
+1024 px up, chosen by the `<video>` itself. 1920 came out near 20 MB and,
+under the scanlines and grain, did not look four times better. A poster frame
+and a 1200×630 Open Graph image come from the same pass. VP9 is opt-in only.
 
 ---
+
+## 9. Non-negotiables
+
+- **`prefers-reduced-motion`**: the preloader is skipped, every scrubbed
+  timeline resolves to its end state, the marquee and CRT sweep hold still,
+  the chromatic split never renders, the member figures show the plain photo,
+  and the roll call is its final frame. The page stays complete and legible.
+- **Below `lg`**: nothing pins or sticks. Chapters stack figure, text, beats;
+  the depth rail and the lines are desktop only.
+- **Keyboard**: every interactive thing is a real `<button>` or `<a>`; map
+  circles, rail ticks and file buttons included. The dossier traps focus and
+  returns it.
+- **No dead placeholder content.** Every string on the page is real, and every
+  credit is one that was checked — a wrong attribution is not a smaller error
+  than a missing one.
