@@ -26,6 +26,12 @@ interface PictureProps {
   className?: string
   imgClassName?: string
   priority?: boolean
+  /**
+   * Paint the blurred placeholder underneath. Off for cut-outs: a 20px blur of
+   * a silhouette is a smudge, and whatever the figure stands on is already a
+   * placeholder.
+   */
+  lqip?: boolean
 }
 
 /**
@@ -49,6 +55,7 @@ export function Picture({
   className,
   imgClassName,
   priority = false,
+  lqip = true,
 }: PictureProps) {
   const [loaded, setLoaded] = useState(false)
   const record = getMedia(slug)
@@ -66,9 +73,12 @@ export function Picture({
       style={{
         aspectRatio: ratio ?? record.aspect,
         overflow: 'hidden',
-        backgroundImage: `url(${record.lqip})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        ...(lqip &&
+          record.lqip && {
+            backgroundImage: `url(${record.lqip})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }),
       }}
     >
       <picture>

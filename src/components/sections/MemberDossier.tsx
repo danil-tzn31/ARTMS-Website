@@ -41,14 +41,16 @@ const PHOTO_FRAME = 4 / 3
  * percentage down the frame, so smaller pulls the crop upward.
  */
 const FOCUS: Record<string, string> = {
-  // Dall — 0.70 portraits, the heaviest crop of the three eras.
+  // Dall — 0.70 portraits, the heaviest crop of the three eras. Four of the
+  // five are the uncut photos the chapter figures were cut from, which are
+  // wider shots with the head high in the frame, so the crop sits at or near
+  // the very top; any lower and it takes the crown, which is what happened
+  // when these were swapped in under the old values.
   'heejin-dall': 'center 18%',
-  // Tightly framed at source, like Choerry's — 20% took her chin off.
-  'haseul-dall': 'center 32%',
-  'kimlip-dall': 'center 18%',
-  'jinsoul-dall': 'center 20%',
-  // Framed tighter at source than the other four, so 18% took her chin off.
-  'choerry-dall': 'center 30%',
+  'haseul-dall': 'center 10%',
+  'kimlip-dall': 'center 0%',
+  'jinsoul-dall': 'center 4%',
+  'choerry-dall': 'center 1%',
   // Club Icarus — 1.26 landscapes, a light trim at the sides.
   'heejin-icarus': 'center 32%',
   'haseul-icarus': 'center 32%',
@@ -65,6 +67,13 @@ const FOCUS: Record<string, string> = {
 interface MemberDossierProps {
   member: Member | null
   onClose: () => void
+  /**
+   * Where focus lands on close. The focus trap already returns focus to
+   * whatever held it on open, but Safari does not focus a button when it is
+   * clicked — so after a mouse open there, "whatever held it" is the body, and
+   * closing drops the visitor at the top of the document.
+   */
+  returnFocusTo?: HTMLElement | null
 }
 
 /**
@@ -75,15 +84,30 @@ interface MemberDossierProps {
  * Framer side of it — AnimatePresence is the only reason an exit animation can
  * run at all once React has decided to unmount.
  */
-export function MemberDossier({ member, onClose }: MemberDossierProps) {
+export function MemberDossier({ member, onClose, returnFocusTo }: MemberDossierProps) {
   return (
     <AnimatePresence>
-      {member && <DossierPanel key={member.id} member={member} onClose={onClose} />}
+      {member && (
+        <DossierPanel
+          key={member.id}
+          member={member}
+          onClose={onClose}
+          returnFocusTo={returnFocusTo}
+        />
+      )}
     </AnimatePresence>
   )
 }
 
-function DossierPanel({ member, onClose }: { member: Member; onClose: () => void }) {
+function DossierPanel({
+  member,
+  onClose,
+  returnFocusTo,
+}: {
+  member: Member
+  onClose: () => void
+  returnFocusTo?: HTMLElement | null
+}) {
   const panel = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
 
@@ -96,6 +120,11 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
   const eraCount = ERAS.filter((e) => member.photos[e.id]).length
 
   useFocusTrap(panel, true)
+
+  // Declared after the trap so its cleanup runs after the trap's, and wins.
+  // preventScroll because the button is already where the visitor left it —
+  // letting the browser scroll it into view fights Lenis for one frame.
+  useEffect(() => () => returnFocusTo?.focus({ preventScroll: true }), [returnFocusTo])
 
   useEffect(() => {
     // Lenis owns the scroll, so stopping the document alone would not hold it.
@@ -299,7 +328,9 @@ function DossierPanel({ member, onClose }: { member: Member; onClose: () => void
                     style={{
                       opacity: isActive ? 1 : 0,
                       pointerEvents: isActive ? undefined : 'none',
-                      transition: reduce ? 'none' : 'opacity 320ms var(--ease-out-expo)',
+                      transition: reduce
+                        ? 'none'
+                        : 'opacity 320ms var(--ease-out-expo)',
                     }}
                   >
                     {eraSlug ? (

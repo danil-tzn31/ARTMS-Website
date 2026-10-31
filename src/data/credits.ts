@@ -35,6 +35,11 @@ export const CREDITS: Credit[] = [
     note: 'Album scans',
     verbatim: true,
   },
+  {
+    label: 'Lore reading — ARTMS’ Map of the Soul',
+    name: 'xio_orbit',
+    verbatim: true,
+  },
 ]
 
 /**

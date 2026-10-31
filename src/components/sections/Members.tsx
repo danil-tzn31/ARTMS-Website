@@ -1,172 +1,99 @@
-import { Suspense, lazy, useRef, useState } from 'react'
+import { Suspense, lazy, useCallback, useRef, useState } from 'react'
 import type { Member } from '@/types'
-import { MEMBERS } from '@/data/members'
-import { SectionMarker } from '@/components/SectionMarker'
-import { MemberRow } from './MemberRow'
-import { MemberHoverPhoto } from './MemberHoverPhoto'
+import { CHAPTERS } from '@/data/member-story'
+import { MEMBER_BY_ID } from '@/data/members'
+import { getLenis } from '@/lib/useLenis'
+import { useDepthTheme } from '@/lib/useDepthTheme'
+import { SoulMap } from './SoulMap'
+import { DepthRail } from './DepthRail'
+import { MemberChapter } from './MemberChapter'
+import { RollCall } from './RollCall'
+
 /**
  * The dossier is the only thing on the site that imports Framer Motion, and it
- * is 43 kB gzipped that nobody needs until they click a name. Splitting it out
- * takes the initial payload under budget; by the time anyone opens a member the
- * chunk has usually been fetched already on hover.
+ * is 43 kB gzipped that nobody needs until they open a file. Splitting it out
+ * keeps the first load under budget; by the time anyone clicks, the chunk has
+ * usually been fetched on hover or focus.
  */
 const MemberDossier = lazy(() =>
   import('./MemberDossier').then((m) => ({ default: m.MemberDossier })),
 )
 
-/** Warm the chunk on intent, so the click itself never waits on a network. */
 let dossierPrefetched = false
 function prefetchDossier() {
   if (dossierPrefetched) return
   dossierPrefetched = true
   void import('./MemberDossier')
 }
-import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
 
-const STATEMENT = ['Five, and the shapes', 'they arrived in.']
-
+/**
+ * The members, told as a descent through one soul.
+ *
+ * The old section was an index — five names in a list, a photo following the
+ * cursor — and it read as a directory. This follows xio_orbit's reading of the
+ * group instead: five members as the five parts of one psyche, from the face
+ * shown to the world down to the part kept deepest. A map opens it, a chapter
+ * per member walks it, and the roll call closes it.
+ */
 export function Members() {
   const root = useRef<HTMLElement>(null)
-  const [hovered, setHovered] = useState<Member | null>(null)
   const [selected, setSelected] = useState<Member | null>(null)
+  const [opener, setOpener] = useState<HTMLElement | null>(null)
 
   /**
-   * Whether the dossier has ever been opened.
-   *
-   * React.lazy resolves when the component is first RENDERED, not when its
-   * props become interesting — so mounting <MemberDossier member={null}> pulled
-   * the chunk on first paint and the code split bought nothing. This gate keeps
-   * it unmounted until the first click.
-   *
-   * It never flips back. Once the dossier has been opened, the component stays
-   * mounted with member={null} so its AnimatePresence still has a tree to run
-   * the exit animation in; unmounting on close would make the overlay vanish
-   * instead of leaving.
+   * Whether the dossier has ever been opened. React.lazy fetches on first
+   * render, not on first interesting prop, so mounting it closed would pull
+   * the chunk on page load. It never flips back: once opened the dossier stays
+   * mounted so AnimatePresence has somewhere to run the exit.
    */
   const [hasOpened, setHasOpened] = useState(false)
 
-  const openMember = (member: Member) => {
+  useDepthTheme(root)
+
+  const open = useCallback((member: Member, from: HTMLElement) => {
+    setOpener(from)
     setHasOpened(true)
     setSelected(member)
-  }
+  }, [])
+  const close = useCallback(() => setSelected(null), [])
 
-  useGSAP(
-    () => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-      const section = root.current
-      if (!section) return
-
-      const triggers: ScrollTrigger[] = []
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 78%',
-          end: 'top 26%',
-          scrub: 0.7,
-          invalidateOnRefresh: true,
-        },
-      })
-      if (tl.scrollTrigger) triggers.push(tl.scrollTrigger)
-
-      tl.fromTo(
-        '[data-members-head]',
-        { autoAlpha: 0, y: 34 },
-        { autoAlpha: 1, y: 0, ease: 'none', stagger: 0.08 },
-        0,
-      )
-
-      // Rows wipe up from their own baseline rather than fading. At this size a
-      // fade reads as the page failing to load; a clip reads as type being set.
-      const batch = ScrollTrigger.batch(
-        gsap.utils.toArray<HTMLElement>('[data-member-row]', section),
-        {
-          start: 'top 90%',
-          once: true,
-          onEnter: (els) =>
-            gsap.fromTo(
-              els,
-              { clipPath: 'inset(0 0 100% 0)', y: 30 },
-              {
-                clipPath: 'inset(0 0 0% 0)',
-                y: 0,
-                duration: 0.85,
-                stagger: 0.07,
-                ease: 'expo.out',
-              },
-            ),
-        },
-      )
-      triggers.push(...batch)
-
-      return () => triggers.forEach((t) => t.kill())
-    },
-    { scope: root },
-  )
+  const jump = useCallback((member: Member) => {
+    const el = document.getElementById(`chapter-${member.id}`)
+    if (!el) return
+    const lenis = getLenis()
+    if (lenis) lenis.scrollTo(el, { duration: 1.6 })
+    else el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [])
 
   return (
     <section
       ref={root}
       id="members"
-      className="relative overflow-x-clip py-[14vh]"
+      className="relative overflow-x-clip"
       aria-labelledby="members-heading"
     >
-      <div className="px-[calc(var(--frame)+28px)]">
-        <SectionMarker
-          n="003"
-          label="Members"
-          side="right"
-          className="ml-auto w-full lg:w-1/2"
-        />
+      <SoulMap onJump={jump} />
 
-        <h2
-          id="members-heading"
-          data-members-head
-          className="u-serif mt-[8vh] max-w-[22ch] lg:ml-[16%]"
-          style={{ fontSize: 'clamp(1.5rem, 3.2vw, 3.4rem)', lineHeight: 1.12 }}
-        >
-          <span className="u-sr-only">Members — </span>
-          {STATEMENT.map((line, i) => (
-            <span
-              key={line}
-              className="block"
-              style={{ paddingLeft: i === 1 ? 'clamp(1rem, 5vw, 5.5rem)' : 0 }}
-            >
-              {line}
-            </span>
-          ))}
-        </h2>
-      </div>
-
-      {/* The list runs edge to edge — the rows are the section's structure, so
-          they carry the frame's rule rather than sitting inside a column. */}
-      <ol
-        className="mt-[10vh]"
-        style={{ borderBottom: '1px solid var(--rule)' }}
-        onMouseLeave={() => setHovered(null)}
-      >
-        {MEMBERS.map((member, i) => (
-          <MemberRow
-            key={member.id}
-            member={member}
+      <div className="relative">
+        <DepthRail onJump={jump} />
+        {CHAPTERS.map((chapter, i) => (
+          <MemberChapter
+            key={chapter.member}
+            chapter={chapter}
+            member={MEMBER_BY_ID[chapter.member]}
             index={i}
-            isActive={hovered?.id === member.id}
-            onHover={(m) => {
-              setHovered(m)
-              if (m) prefetchDossier()
-            }}
-            onSelect={openMember}
+            total={CHAPTERS.length}
+            onOpen={open}
+            onIntent={prefetchDossier}
           />
         ))}
-      </ol>
+      </div>
 
-      <MemberHoverPhoto member={selected ? null : hovered} />
-      {/* No fallback UI: the chunk is prefetched on hover and on focus, so the
-          gap between click and overlay is a frame, not a spinner. A spinner
-          here would flash more often than it helped. */}
+      <RollCall />
+
       {hasOpened && (
         <Suspense fallback={null}>
-          <MemberDossier member={selected} onClose={() => setSelected(null)} />
+          <MemberDossier member={selected} onClose={close} returnFocusTo={opener} />
         </Suspense>
       )}
     </section>

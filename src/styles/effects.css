@@ -280,4 +280,242 @@
       width: var(--shot-w);
     }
   }
+
+  /* --- Members: the descent ------------------------------------------------ */
+
+  /* Sizes come in from the components as pairs so the numbers live beside the
+     code that uses them; the breakpoint picks one here. */
+  .soul-map {
+    --u: var(--u-sm);
+  }
+  .cf-chapter {
+    --chapter-circle: var(--circle-sm);
+  }
+  .roll-stage {
+    width: var(--roll-sm);
+    height: var(--roll-sm);
+  }
+  @media (min-width: 1024px) {
+    .soul-map {
+      --u: var(--u-lg);
+    }
+    .cf-chapter {
+      --chapter-circle: var(--circle-lg);
+    }
+    .cf-beat {
+      min-height: var(--beat-lg);
+    }
+    .roll-stage {
+      width: var(--roll-lg);
+      height: var(--roll-lg);
+    }
+  }
+
+  .soul-circle {
+    transition: background-color 300ms var(--ease-out-expo);
+  }
+  .soul-circle:hover,
+  .soul-circle:focus-visible {
+    background: color-mix(in srgb, var(--member) 14%, transparent);
+  }
+
+  .cf {
+    position: relative;
+    width: var(--d);
+    aspect-ratio: 1;
+    margin: 0;
+  }
+
+  .cf-disc {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--member);
+    background: color-mix(in srgb, var(--member) 12%, transparent);
+    transition:
+      background-color 480ms var(--ease-out-expo),
+      border-color 480ms var(--ease-out-expo);
+  }
+  .cf[data-active='dall'] .cf-disc {
+    border-color: #c9a7f0;
+  }
+  .cf[data-active='icarus'] .cf-disc {
+    background: #07140b;
+  }
+
+  .cf-clip {
+    position: absolute;
+    inset: 0;
+  }
+  .cf-clip-circle {
+    clip-path: circle(50%);
+  }
+
+  /* Hidden looks are visibility: hidden as well as transparent, so the browser
+     skips painting them — which is what keeps the burn filter from running on
+     a copy nobody can see. The visibility change is delayed by the fade's
+     length on the way out, so the outgoing look keeps its treatment until it
+     has actually gone. */
+  .cf-look {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 480ms var(--ease-out-expo),
+      visibility 0s linear 480ms;
+  }
+  .cf[data-active='dall'] [data-look='dall'],
+  .cf[data-active='icarus'] [data-look='icarus'],
+  .cf[data-active='ego'] [data-look='ego'] {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 480ms var(--ease-out-expo),
+      visibility 0s;
+  }
+
+  .cf-shot {
+    position: absolute;
+  }
+
+  /* Filters go on the wrapper, not the img. The wrapper clips its image to the
+     silhouette's own box, and a filter applies after that clip — so the glow
+     can spread past the crown instead of being cut flat across it. */
+  [data-look='dall'] .cf-shot {
+    filter: brightness(1.08) drop-shadow(0 0 28px #fff) drop-shadow(0 0 8px #fff);
+  }
+  [data-look='icarus'] .cf-shot {
+    filter: url('#era-toxic') drop-shadow(0 0 22px rgb(0 255 90 / 0.55));
+  }
+  .cf-echo {
+    filter: url('#era-echo-red');
+  }
+
+  /* The empty circle. */
+  .cf-absence {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    opacity: 0;
+    transition: opacity 480ms var(--ease-out-expo);
+  }
+  .cf[data-absent='ego'][data-active='ego'] .cf-disc {
+    border-style: dashed;
+    border-color: var(--member);
+    background: transparent;
+  }
+  .cf[data-absent='ego'][data-active='ego'] .cf-absence {
+    opacity: 1;
+  }
+
+  .cf-caption {
+    position: absolute;
+    top: calc(100% + 1.1rem);
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+  .cf-caption-line {
+    display: none;
+  }
+  .cf-bar {
+    display: block;
+    width: 22px;
+    height: 3px;
+    background: var(--rule-strong);
+    transition: background-color 300ms var(--ease-out-expo);
+  }
+  .cf[data-active='dall'] [data-for='dall'],
+  .cf[data-active='icarus'] [data-for='icarus'],
+  .cf[data-active='ego'] [data-for='ego'] {
+    display: block;
+  }
+  .cf[data-active='dall'] .cf-bar[data-for='dall'],
+  .cf[data-active='icarus'] .cf-bar[data-for='icarus'],
+  .cf[data-active='ego'] .cf-bar[data-for='ego'] {
+    background: var(--member);
+  }
+
+  /* Her thread breaks into dashes across the beat she is absent from. Painted
+     as background-coloured gaps over the thread rather than as a second line,
+     so it stays in step with the thread's scrub without a trigger of its own. */
+  .cf-beat[data-absent]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    /* The thread sits 12px left of the column (the grid gap, see
+       MemberChapter) and 3rem of padding away from the beat. */
+    left: calc(-3rem - 13px);
+    width: 2px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--bg) 0 7px,
+      transparent 7px 14px
+    );
+  }
+
+  /* Under reduced motion the figure is just the photograph: no glow, no tint,
+     no echoes. */
+  @media (prefers-reduced-motion: reduce) {
+    .cf-shot {
+      filter: none !important;
+    }
+    .cf-echo {
+      display: none;
+    }
+  }
+
+  /* The blend goes on the circle, not the disc inside it. The circle is the
+     element being transformed, and a transform makes it its own stacking
+     context — so a disc blending inside it has nothing behind it to multiply
+     with, and the five just stack as flat colour. */
+  .roll-circle {
+    mix-blend-mode: multiply;
+  }
+
+  .spark {
+    display: block;
+    width: 20px;
+    height: 20px;
+    translate: -50% -50%;
+    opacity: 0;
+    filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 12px currentColor);
+    pointer-events: none;
+  }
+  .spark > svg {
+    animation: spark-twinkle 1.8s var(--ease-out-expo) infinite alternate;
+  }
+  @keyframes spark-twinkle {
+    from {
+      transform: scale(0.78) rotate(0deg);
+    }
+    to {
+      transform: scale(1.1) rotate(45deg);
+    }
+  }
+  .map-spark {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* The chapter's spark is her colour, end to end. */
+  .thread-spark {
+    color: var(--member);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spark > svg {
+      animation: none;
+    }
+  }
 }

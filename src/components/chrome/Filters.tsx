@@ -90,6 +90,32 @@ export function Filters() {
             <feFuncA type="linear" slope="2.2" intercept="-0.32" />
           </feComponentTransfer>
         </filter>
+
+        {/* Club Icarus, on a member's figure: the photograph pulled halfway
+            toward a single toxic-green ramp. Halfway, so skin and hair keep
+            enough of their own colour to read as her lit green rather than
+            as a green silhouette; the glow around her is CSS. */}
+        <filter id="era-toxic" colorInterpolationFilters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="0.53 0.06 0.01 0 0
+                    0.18 0.85 0.07 0 0.01
+                    0.06 0.11 0.52 0 0
+                    0    0    0    1 0"
+          />
+        </filter>
+
+        {/* Hyper-Ego's echoes: the figure reduced to luminance and laid in red.
+            Alpha passes through untouched, so the echoes keep their edges. */}
+        <filter id="era-echo-red" colorInterpolationFilters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="0.55 0.75 0.20 0 0.10
+                    0.05 0.08 0.02 0 0
+                    0.04 0.06 0.02 0 0
+                    0    0    0    1 0"
+          />
+        </filter>
       </defs>
     </svg>
   )

@@ -24,6 +24,8 @@ function CreditRow({ credit }: { credit: Credit }) {
       </span>
       <span className="u-sr-only">(opens in a new tab)</span>
     </a>
+  ) : credit.verbatim ? (
+    <span className="normal-case">{credit.name}</span>
   ) : (
     credit.name
   )
