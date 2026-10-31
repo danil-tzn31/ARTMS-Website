@@ -217,9 +217,11 @@ export function SoulMap({ onJump }: SoulMapProps) {
             background: `linear-gradient(to bottom, var(--ink) ${lineDark}%, ${DEPTH_DARK['--ink']} ${lineDark}%, ${DEPTH_DARK['--ink']} ${lineLight}%, var(--ink) ${lineLight}%)`,
           }}
         />
+        {/* No z-index: it sits under the circles' fills, so it slips out of
+            sight inside each circle and shows only where the line is bare. */}
         <Spark
           data-map-spark
-          className="map-spark absolute left-1/2 z-20"
+          className="map-spark absolute left-1/2"
           style={{ color: 'var(--ink)' }}
         />
 

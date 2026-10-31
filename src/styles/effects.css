@@ -492,23 +492,37 @@
   }
 
   .spark {
+    position: relative;
     display: block;
     width: 20px;
     height: 20px;
     translate: -50% -50%;
     opacity: 0;
-    filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 12px currentColor);
     pointer-events: none;
   }
   .spark > svg {
-    animation: spark-twinkle 1.8s var(--ease-out-expo) infinite alternate;
+    position: absolute;
+    inset: 0;
   }
-  @keyframes spark-twinkle {
+  .spark-core {
+    filter: drop-shadow(0 0 3px currentColor);
+  }
+
+  /* The glow breathes; the star itself holds still, upright. It used to turn
+     45° and back, which read as a loading spinner riding the line. Only the
+     halo's opacity animates — the blur is fixed — so it stays on the
+     compositor and never repaints. */
+  .spark-halo {
+    scale: 1.7;
+    filter: blur(3px) drop-shadow(0 0 10px currentColor);
+    animation: spark-glow 1.6s ease-in-out infinite alternate;
+  }
+  @keyframes spark-glow {
     from {
-      transform: scale(0.78) rotate(0deg);
+      opacity: 0.35;
     }
     to {
-      transform: scale(1.1) rotate(45deg);
+      opacity: 1;
     }
   }
   .map-spark {
@@ -527,8 +541,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .spark > svg {
+    .spark-halo {
       animation: none;
+      opacity: 0.7;
     }
   }
 }
