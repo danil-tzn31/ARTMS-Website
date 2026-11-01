@@ -246,7 +246,9 @@
     margin-top: 0;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
+  /* Only where the hero pins — a fine pointer. On touch it scrolls away
+     unpinned, and the overlap would drop the band across its lower half. */
+  @media (prefers-reduced-motion: no-preference) and (pointer: fine) {
     .fx-band-overlap {
       /* svh, not vh, and that is the whole point: the hero is h-[100svh]. On
          iOS Safari those are different lengths — vh resolves against the large
