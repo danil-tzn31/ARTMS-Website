@@ -3,7 +3,7 @@ import type { Member } from '@/types'
 import { type Chapter, LINE_TIP, MEMBER_STORY } from '@/data/member-story'
 import { ERAS } from '@/data/eras'
 import { formatDotted, pad } from '@/lib/format'
-import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
+import { gsap, ScrollTrigger, useGSAP, wipe } from '@/lib/gsap'
 import { ChapterFigure } from './ChapterFigure'
 import { Spark } from '@/components/Spark'
 
@@ -68,6 +68,10 @@ export function MemberChapter({
         if (!head) return
 
         // Name wipes up from its own baseline, the lines under it rise in.
+        const [nameFrom, nameTo] = wipe(
+          { clipPath: 'inset(0 0 100% 0)' },
+          { clipPath: 'inset(0 0 -10% 0)' },
+        )
         gsap
           .timeline({
             scrollTrigger: {
@@ -76,11 +80,7 @@ export function MemberChapter({
               toggleActions: 'play none none reverse',
             },
           })
-          .fromTo(
-            head,
-            { clipPath: 'inset(0 0 100% 0)' },
-            { clipPath: 'inset(0 0 -10% 0)', duration: 0.9, ease: 'expo.out' },
-          )
+          .fromTo(head, nameFrom, { ...nameTo, duration: 0.9, ease: 'expo.out' })
           .fromTo(
             meta,
             { y: 40, autoAlpha: 0 },

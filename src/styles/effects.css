@@ -231,6 +231,29 @@
     opacity: calc(var(--grain-opacity) * 0.6);
   }
 
+  /* Phones and tablets get the moving version all the time. Nothing sets
+     data-scrolling there (it comes from Lenis's velocity, and Lenis is off on
+     touch), so the blend never dropped, and a live noise filter blended over
+     a 3x screen is more than a phone can redraw while it scrolls: low frame
+     rates, and Safari leaving sections blank until it catches up. The grain
+     is the same noise, rendered once to a small tile and repeated. */
+  @media (pointer: coarse) {
+    .fx-scanlines {
+      mix-blend-mode: normal;
+      opacity: calc(var(--scanline-opacity) * 0.55);
+    }
+
+    .fx-grain {
+      mix-blend-mode: normal;
+      opacity: calc(var(--grain-opacity) * 0.6);
+      background: url('../assets/grain.webp') 0 0 / 128px repeat;
+    }
+
+    .fx-grain > svg {
+      display: none;
+    }
+  }
+
   /* --- Hero handoff --------------------------------------------------------- */
 
   /* By the end of the hero's pin the wordmark has docked near the top and the

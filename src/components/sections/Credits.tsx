@@ -2,9 +2,9 @@ import { useRef } from 'react'
 import { type Credit, CREDITS, COLOPHON } from '@/data/credits'
 import { SectionMarker } from '@/components/SectionMarker'
 import { Wordmark } from '@/components/chrome/Wordmark'
-import { useClock } from '@/lib/useClock'
+import { Clock } from '@/components/Clock'
 import { getLenis } from '@/lib/useLenis'
-import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
+import { gsap, ScrollTrigger, useGSAP, wipe } from '@/lib/gsap'
 
 function CreditRow({ credit }: { credit: Credit }) {
   const name = credit.url ? (
@@ -58,7 +58,6 @@ function CreditRow({ credit }: { credit: Credit }) {
  */
 export function Credits() {
   const root = useRef<HTMLElement>(null)
-  const time = useClock()
   const year = new Date().getFullYear()
 
   useGSAP(
@@ -94,21 +93,21 @@ export function Credits() {
 
       // The closing wordmark wipes up as it enters, so the page ends on the
       // same mark it opened with — and on the same kind of move.
-      const mark = gsap.fromTo(
-        '[data-closing-mark]',
+      const [markFrom, markTo] = wipe(
         { clipPath: 'inset(0 0 100% 0)' },
-        {
-          clipPath: 'inset(0 0 0% 0)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '[data-closing-mark]',
-            start: 'top 95%',
-            end: 'bottom bottom',
-            scrub: 0.6,
-            invalidateOnRefresh: true,
-          },
-        },
+        { clipPath: 'inset(0 0 0% 0)' },
       )
+      const mark = gsap.fromTo('[data-closing-mark]', markFrom, {
+        ...markTo,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '[data-closing-mark]',
+          start: 'top 95%',
+          end: 'bottom bottom',
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+        },
+      })
       if (mark.scrollTrigger) triggers.push(mark.scrollTrigger)
 
       return () => triggers.forEach((t) => t.kill())
@@ -215,7 +214,11 @@ export function Credits() {
           </button>
 
           <p className="u-mono u-dim tabular-nums">
-            Seoul <span style={{ color: 'var(--accent)' }}>{time}</span> KST
+            Seoul{' '}
+            <span style={{ color: 'var(--accent)' }}>
+              <Clock />
+            </span>{' '}
+            KST
           </p>
 
           <p className="u-mono u-dim">© {year} — Fan project</p>

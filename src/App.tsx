@@ -7,6 +7,7 @@ import { Filters } from '@/components/chrome/Filters'
 import { Screen } from '@/components/chrome/Screen'
 import { Marquee } from '@/components/chrome/Marquee'
 import { Preloader } from '@/components/chrome/Preloader'
+import { DesktopNote } from '@/components/chrome/DesktopNote'
 import { Wordmark } from '@/components/chrome/Wordmark'
 import { Hero } from '@/components/sections/Hero'
 import { Eras } from '@/components/sections/Eras'
@@ -15,7 +16,7 @@ import { Credits } from '@/components/sections/Credits'
 import { useLenis, useScrollVelocity } from '@/lib/useLenis'
 import { useInvert } from '@/lib/useInvert'
 import { useEraTheme } from '@/lib/useEraTheme'
-import { useClock } from '@/lib/useClock'
+import { Clock } from '@/components/Clock'
 
 const TICKER = [
   'ARTMS',
@@ -34,7 +35,6 @@ const TICKER = [
 export default function App() {
   const scope = useRef<HTMLDivElement>(null)
   const { inverted, toggle } = useInvert()
-  const time = useClock()
 
   // The preloader owns the first three seconds. The page underneath is mounted
   // and animating the whole time, so the handoff lands on a hero that has
@@ -57,6 +57,7 @@ export default function App() {
       <Cursor />
 
       {!booted && <Preloader onDone={onBooted} />}
+      {booted && <DesktopNote />}
 
       <EdgeFrame>
         {/* Mounted on the top rule. */}
@@ -85,8 +86,16 @@ export default function App() {
 
         {/* Mounted on the bottom rule. */}
         <div className="absolute -bottom-2.5 left-3">
-          <span className="u-mono-sm px-1.5" style={{ background: 'var(--bg)' }}>
-            Fan Archive — Not Affiliated With Modhaus
+          {/* Shortened on phones: in full it wrapped onto two lines and
+              broke out of the bottom rule. The credits say it in full. */}
+          <span
+            className="u-mono-sm whitespace-nowrap px-1.5"
+            style={{ background: 'var(--bg)' }}
+          >
+            <span className="sm:hidden">Fan Archive</span>
+            <span className="hidden sm:inline">
+              Fan Archive — Not Affiliated With Modhaus
+            </span>
           </span>
         </div>
         <div className="absolute -bottom-2.5 right-3">
@@ -94,7 +103,7 @@ export default function App() {
             className="u-mono-sm px-1.5 tabular-nums"
             style={{ background: 'var(--bg)', color: 'var(--ink-dim)' }}
           >
-            {time} KST
+            <Clock /> KST
           </span>
         </div>
       </EdgeFrame>

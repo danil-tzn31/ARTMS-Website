@@ -5,7 +5,7 @@ import { MEMBER_BY_ID } from '@/data/members'
 import { SectionMarker } from '@/components/SectionMarker'
 import { DEPTH_DARK } from '@/lib/useDepthTheme'
 import { pad } from '@/lib/format'
-import { gsap, useGSAP } from '@/lib/gsap'
+import { gsap, TOUCH, useGSAP } from '@/lib/gsap'
 import { Spark } from '@/components/Spark'
 
 const STATEMENT = ['Five members.', 'One soul,', 'split five ways.']
@@ -122,12 +122,16 @@ export function SoulMap({ onJump }: SoulMapProps) {
       circles.forEach((circle, i) => {
         const at = (LAYOUT.tops[i] ?? 0) / LAYOUT.height
         const member = CHAPTERS[i] && MEMBER_BY_ID[CHAPTERS[i].member]
-        tl.fromTo(
-          [circle, rings[i]].filter(Boolean),
-          { scale: 0.85, autoAlpha: 0 },
-          { scale: 1, autoAlpha: 1, duration: 0.07 },
-          Math.max(0, at - 0.03),
-        )
+        // On touch screens the circles are simply there, already open. The
+        // line still draws through them.
+        if (!TOUCH) {
+          tl.fromTo(
+            [circle, rings[i]].filter(Boolean),
+            { scale: 0.85, autoAlpha: 0 },
+            { scale: 1, autoAlpha: 1, duration: 0.07 },
+            Math.max(0, at - 0.03),
+          )
+        }
         if (member) tl.to(spark, { color: member.color, duration: 0.04 }, at)
       })
     },
@@ -312,9 +316,11 @@ export function SoulMap({ onJump }: SoulMapProps) {
 
         {/* Inside the map rather than under it: the map's bottom edge is where
             the first chapter's thread starts, and anything between the two
-            would be a gap in the line. */}
+            would be a gap in the line. Below it on phones, where there is no
+            line to break and the map is too narrow for this and the inner
+            world label to share a row. */}
         <p
-          className="u-mono-sm absolute right-[calc(var(--frame)+28px)] bottom-4"
+          className="u-mono-sm absolute right-[calc(var(--frame)+28px)] -bottom-8 lg:bottom-4"
           style={{ color: 'var(--ink-dim)' }}
         >
           Map reading after <span className="normal-case">xio_orbit</span>

@@ -38,8 +38,8 @@ export const DEPTH_DARK = {
  * the fade down to four frames did not help either; it is the fade, not its
  * smoothness.
  *
- * The eras keep their fade: three of them, far apart, with nothing sticky on
- * screen while they change.
+ * The eras keep their fade on desktop: three of them, far apart, with nothing
+ * sticky on screen while they change. On phones they cut as well.
  */
 export function useDepthTheme(scope: React.RefObject<HTMLElement | null>) {
   useGSAP(

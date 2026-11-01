@@ -71,7 +71,11 @@ export function Marquee({ items, speed = 28, className = '' }: MarqueeProps) {
           applied.current = next
           gsap.to(tween, { timeScale: next, duration: 0.4, overwrite: true })
         },
+        // Only runs while it is on screen. Left going, it moved an invisible
+        // strip on every frame for the rest of the visit.
+        onToggle: (self) => (self.isActive ? tween.play() : tween.pause()),
       })
+      if (!st.isActive) tween.pause()
 
       return () => {
         st.kill()

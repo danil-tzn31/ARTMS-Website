@@ -1,7 +1,7 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { gsap, useGSAP } from '@/lib/gsap'
 import { VIDEO } from '@/lib/media'
-import { useClock } from '@/lib/useClock'
+import { Clock } from '@/components/Clock'
 
 /**
  * Full-bleed video, one enormous wordmark clipped by the viewport on both
@@ -33,7 +33,21 @@ import { useClock } from '@/lib/useClock'
 export function Hero() {
   const root = useRef<HTMLElement>(null)
   const wordmark = useRef<HTMLHeadingElement>(null)
-  const time = useClock()
+
+  // Paused while the hero is off screen. A playing video keeps the phone
+  // decoding and redrawing it on every frame even when nobody can see it,
+  // which is frame time taken from whatever is actually on screen.
+  useEffect(() => {
+    const section = root.current
+    const video = section?.querySelector('video')
+    if (!section || !video) return
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) void video.play().catch(() => {})
+      else video.pause()
+    })
+    io.observe(section)
+    return () => io.disconnect()
+  }, [])
 
   useGSAP(
     () => {
@@ -59,17 +73,26 @@ export function Hero() {
 
       if (reduce) return
 
+      // Pinned on desktop only. On a phone the pin is a position: fixed swap
+      // timed off scroll events, and iOS Safari's momentum scroll delivers
+      // those late — the hero stayed fixed over the eras for a beat and then
+      // jumped. There it simply scrolls away, playing the same scrub as it
+      // goes, and the marquee waits below it instead of overlapping
+      // (see .fx-band-overlap).
+      const coarse = window.matchMedia('(pointer: coarse)').matches
       gsap
         .timeline({
-          scrollTrigger: {
-            trigger: root.current,
-            start: 'top top',
-            end: '+=90%',
-            scrub: 0.6,
-            pin: true,
-            pinSpacing: true,
-            anticipatePin: 1,
-          },
+          scrollTrigger: coarse
+            ? { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.6 }
+            : {
+                trigger: root.current,
+                start: 'top top',
+                end: '+=90%',
+                scrub: 0.6,
+                pin: true,
+                pinSpacing: true,
+                anticipatePin: 1,
+              },
         })
         .to(wordmark.current, { yPercent: -32, scale: 0.46, ease: 'none' }, 0)
         .to('[data-hero-video]', { scale: 1.14, ease: 'none' }, 0)
@@ -181,7 +204,7 @@ export function Hero() {
           <span className="u-dim">Seoul</span>
           <br />
           <span className="tabular-nums" style={{ color: 'var(--accent)' }}>
-            {time}
+            <Clock />
           </span>{' '}
           KST
         </div>

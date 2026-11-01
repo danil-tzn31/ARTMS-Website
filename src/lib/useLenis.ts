@@ -21,13 +21,17 @@ export function getLenis() {
 export function useLenis() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // Not on phones and tablets at all. It was already leaving touch scroll
+    // native (syncTouch: false), so on a phone it smoothed nothing — but it
+    // still sat between iOS Safari's momentum scroll and ScrollTrigger, and
+    // the pinned hero and the fixed frame came apart from the page there.
+    // Without it, ScrollTrigger reads the native scroll directly. Everything
+    // that scrolls programmatically already falls back when this is null.
+    if (window.matchMedia('(pointer: coarse)').matches) return
 
     const lenis = new Lenis({
       lerp: 0.085,
       wheelMultiplier: 0.9,
-      touchMultiplier: 1.6,
-      // Smoothing touch scroll fights the platform on iOS; native is better.
-      syncTouch: false,
     })
     instance = lenis
 

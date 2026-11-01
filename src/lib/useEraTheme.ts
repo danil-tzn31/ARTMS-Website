@@ -25,13 +25,26 @@ export function useEraTheme(scope: React.RefObject<HTMLElement | null>) {
     () => {
       const root = document.documentElement
 
-      const apply = (vars: Record<string, string>) =>
+      // Phones get a cut instead of the fade. Every frame of the fade restyles
+      // and repaints the whole page, which a laptop absorbs and a phone does
+      // not, and it lands just as each era's title is coming in, so that is
+      // where the stutter showed. The members section already switches its
+      // palette the same way.
+      const cut = window.matchMedia('(pointer: coarse)').matches
+
+      const apply = (vars: Record<string, string>) => {
+        if (cut) {
+          gsap.killTweensOf(root)
+          gsap.set(root, vars)
+          return
+        }
         gsap.to(root, {
           ...vars,
           duration: DURATION,
           ease: 'power2.out',
           overwrite: 'auto',
         })
+      }
 
       const triggers: ScrollTrigger[] = []
 

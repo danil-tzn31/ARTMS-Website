@@ -3,7 +3,7 @@ import type { Era } from '@/types'
 import { Picture } from '@/components/Picture'
 import { SectionMarker } from '@/components/SectionMarker'
 import { formatDotted } from '@/lib/format'
-import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
+import { gsap, ScrollTrigger, useGSAP, wipe } from '@/lib/gsap'
 
 /**
  * Where each photo sits inside its panel. Hand-authored per era rather than
@@ -217,15 +217,19 @@ export function EraPanel({ era, index }: EraPanelProps) {
       })
       if (tl.scrollTrigger) triggers.push(tl.scrollTrigger)
 
+      const [titleFrom, titleTo] = wipe(
+        { clipPath: 'inset(0 0 108% 0)', xPercent: flush === 'left' ? -4 : 4 },
+        { clipPath: 'inset(0 0 -8% 0)', xPercent: 0 },
+      )
+      const [releaseFrom, releaseTo] = wipe(
+        { clipPath: 'inset(0 0 100% 0)' },
+        { clipPath: 'inset(0 0 0% 0)' },
+      )
+
       tl.fromTo(
         '[data-title-line]',
-        { clipPath: 'inset(0 0 108% 0)', xPercent: flush === 'left' ? -4 : 4 },
-        {
-          clipPath: 'inset(0 0 -8% 0)',
-          xPercent: 0,
-          ease: 'none',
-          stagger: 0.12,
-        },
+        titleFrom,
+        { ...titleTo, ease: 'none', stagger: 0.12 },
         0,
       )
         .fromTo(
@@ -234,12 +238,7 @@ export function EraPanel({ era, index }: EraPanelProps) {
           { autoAlpha: 1, y: 0, ease: 'none', stagger: 0.07 },
           0.1,
         )
-        .fromTo(
-          '[data-release]',
-          { clipPath: 'inset(0 0 100% 0)' },
-          { clipPath: 'inset(0 0 0% 0)', ease: 'none' },
-          0.2,
-        )
+        .fromTo('[data-release]', releaseFrom, { ...releaseTo, ease: 'none' }, 0.2)
 
       // Tracklist rows enter once, on their own trigger — the panel timeline is
       // scrubbed, and a scrubbed list reveal reads as a scrollbar.
