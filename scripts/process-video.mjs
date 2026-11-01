@@ -29,27 +29,33 @@ const only = process.argv.includes('--only')
 // VP9 is opt-in. Every browser that can run this site plays H.264, and a VP9
 // pass over 60 s of denoised 960p costs minutes of CPU to save bytes nobody
 // downloads twice. Run `npm run video -- --only webm` if you want it.
-const DEFAULT_JOBS = ['mp4', 'mp4-lg', 'poster', 'og']
+const DEFAULT_JOBS = ['mp4', 'mp4-lg', 'mp4-sm', 'poster', 'og']
 
 // The master is heavily grained, and grain is the enemy of inter-frame
 // compression — a straight 720p/CRF30 pass still came out at 17 MB. Denoising
 // first costs nothing visually here (the site lays its own grain and scanlines
 // over the top) and cuts the bitrate by ~5x.
-const vf = (width) => `scale=${width}:-2,hqdn3d=4:3:6:4.5,fps=24`
+const vf = (width, crop = '') => `${crop}scale=${width}:-2,hqdn3d=4:3:6:4.5,fps=24`
 
 // Two widths, picked by the <video> by screen size: 960 for phones and small
 // laptops, 1280 from 1024px up. At this CRF 1280 is 9.1 MB against 5.2 MB —
 // worth it where the video fills a large screen, not on a phone's data plan.
 // 1920 came out near 20 MB and, under the scanlines and grain, did not look
 // like a fourfold improvement on 960.
-const h264 = (width) => [
-  '-i', IN, '-an', '-vf', vf(width),
+const h264 = (width, crop) => [
+  '-i', IN, '-an', '-vf', vf(width, crop),
   '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'slow',
   // 38 rather than 36 since the 4K master: at 960, 5.2 MB against 6.9 MB, and
   // side by side on a paused close-up frame the two are hard to tell apart.
   '-crf', '38', '-pix_fmt', 'yuv420p',
   '-movflags', '+faststart', '-y',
 ]
+// Phones held upright. The hero covers the screen, so a phone only ever shows
+// a tall strip out of the middle of the 16:9 frame and the rest is downloaded
+// for nothing. Cutting that strip out of the master gives a file around half
+// the size that is also sharper on screen, since none of it is thrown away.
+const PORTRAIT = 'crop=ih*9/16:ih,'
+
 const exists = (p) => access(p).then(() => true, () => false)
 const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`
 
@@ -57,6 +63,7 @@ const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`
 const OUTPUTS = {
   mp4: 'hero-960.mp4',
   'mp4-lg': 'hero-1280.mp4',
+  'mp4-sm': 'hero-portrait.mp4',
   webm: 'hero.webm',
   poster: 'hero.jpg',
   og: 'og.jpg',
@@ -66,6 +73,7 @@ const OUTPUTS = {
 const JOBS = {
   mp4: h264(960),
   'mp4-lg': h264(1280),
+  'mp4-sm': h264(432, PORTRAIT),
   webm: [
     '-i', IN, '-an', '-vf', vf(960),
     '-c:v', 'libvpx-vp9', '-crf', '42', '-b:v', '0',

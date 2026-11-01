@@ -30,13 +30,15 @@ export function fallbackSrc(slug: string): string | undefined {
 }
 
 /**
- * The hero footage at two widths. The browser takes the first source whose
- * `media` matches, so the large one has to come first. See process-video.mjs
- * for why there are two.
+ * The hero footage in three cuts. The browser takes the first source whose
+ * `media` matches, so the order matters: large screens, then tall ones (a
+ * phone held upright gets the portrait cut), then everything else. See
+ * process-video.mjs for the sizes.
  */
 export const VIDEO = {
   sources: [
     { src: `${BASE}/video/hero-1280.mp4`, media: '(min-width: 1024px)' },
+    { src: `${BASE}/video/hero-portrait.mp4`, media: '(max-aspect-ratio: 3/4)' },
     { src: `${BASE}/video/hero-960.mp4` },
   ],
   poster: `${BASE}/video/hero.jpg`,
